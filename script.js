@@ -210,6 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
             rsvpStep1.classList.remove('hidden');
             rsvpStep1.style.opacity = '1';
             rsvpStep2.classList.add('hidden');
+            
+            // Fix: Explicitly hide the decline step
+            const step3 = document.getElementById('rsvp-step-3');
+            if(step3) step3.classList.add('hidden');
+            
             modalBackBtn.style.display = 'block';
             if (musicToggle) musicToggle.classList.remove('hidden');
             showCelebration();
@@ -274,6 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnEditResponse) {
         btnEditResponse.addEventListener('click', () => {
             rsvpStep2.classList.add('hidden');
+            // Fix: Hide decline step when editing response
+            const step3 = document.getElementById('rsvp-step-3');
+            if(step3) step3.classList.add('hidden');
+            
             rsvpStep1.classList.remove('hidden');
             rsvpStep1.style.opacity = '1';
             modalBackBtn.style.display = 'block';

@@ -279,16 +279,23 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .verse-card-image-wrap {
-    max-width: 600px;
+    max-width: 600px; /* Reduced to match the screenshot's 'Physical Card' proportions */
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0; 
+}
+
+#verse-card .section-container {
+    padding: 0; /* Remove global section padding to ensure 'Full Card' look */
+    max-width: 100%;
 }
 
 .verse-card-full-img {
     width: 100%;
     height: auto;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05); /* Soft premium shadow */
+    box-shadow: 0 40px 100px rgba(0,0,0,0.1); /* Deeper, more luxurious shadow */
     border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05); /* Subtle edge definition */
+    display: block;
 }
 
 /* Schedule */
@@ -416,6 +423,55 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     text-align: center;
 }
 
+/* Luxury Footer */
+.luxury-footer {
+    padding: 6rem 0 8rem;
+    background: var(--bg-white);
+    text-align: center;
+    border-top: 1px solid var(--border-light);
+}
+
+.footer-calligraphy-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.arabic-quote-footer {
+    font-family: 'Aref Ruqaa', 'Amiri', serif;
+    font-size: clamp(1.2rem, 5vw, 2.2rem);
+    color: var(--text-primary);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    direction: rtl;
+    opacity: 0.8;
+}
+
+.footer-divider-ornament {
+    width: 60px;
+    height: 2px;
+    background: var(--border-light);
+    margin: 0 auto;
+    position: relative;
+}
+
+.footer-divider-ornament::after {
+    content: '✧';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-white);
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Modal UI Fixes */
+.rsvp-step.hidden {
+    display: none !important;
+}
+
 .rsvp-intro {
     font-size: 1.1rem;
     margin-bottom: 3rem;
@@ -500,10 +556,25 @@ footer p { margin-bottom: 0.5rem; }
     .location-text { text-align: center !important; }
     .grid-container { grid-template-columns: 1fr; }
     .countdown-minimal {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
     }
+
+    .count-item {
+        padding: 1.5rem 0.5rem;
+        min-width: unset;
+        flex: 1;
+    }
+
+    .count-item span {
+        font-size: 2.2rem;
+    }
+
+    .count-item label {
+        font-size: 0.5rem;
+    }
+
     
     #hero {
         padding: 0;
@@ -570,15 +641,20 @@ footer p { margin-bottom: 0.5rem; }
 .rsvp-modal-card {
     background: #FFFFFF;
     width: 95vw;
-    max-width: 500px;
+    max-width: 650px; /* Increased for a bigger 'Grand' feel */
     border-radius: 12px;
     box-shadow: 0 40px 100px rgba(0,0,0,0.2);
     position: relative;
     z-index: 20;
-    overflow-y: auto;
-    max-height: 90vh;
+    overflow-y: auto; /* Re-enabled scrolling to see the countdown and button! */
+    max-height: 90vh; /* Scaled back slightly for better mobile comfort */
+    padding: 0; /* Zero padding to fill the box with the card design */
+    border: 1px solid rgba(197, 160, 89, 0.4); 
+}
+
+/* Individual padding for form steps so they don't look cramped */
+.rsvp-step:not(#rsvp-step-2) {
     padding: clamp(2rem, 8vw, 4rem) clamp(1.5rem, 5vw, 2.5rem) 3rem;
-    border: 1px solid rgba(197, 160, 89, 0.4); /* Sophisticated Soft Gold Border on Whole Card */
 }
 
 @media (max-width: 480px) {
@@ -888,9 +964,110 @@ footer p { margin-bottom: 0.5rem; }
 }
 
 /* Edit Response Button */
+.rsvp-success-graphic-container {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.rsvp-success-full-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.hotspot-link {
+    position: absolute;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0);
+    transition: background 0.3s ease;
+}
+
+.location-hotspot {
+    top: 70.2%;
+    left: 45.8%;
+    width: 30.5%;
+    height: 4.2%;
+    border-radius: 20px;
+}
+
+.phone-hotspot {
+    top: 76.5%;
+    left: 47%;
+    width: 32%;
+    height: 3.5%;
+}
+
+/* Integrated Success Countdown Overlay - FIXED POSITION */
+.success-countdown-overlay {
+    position: absolute;
+    top: 77.5%; /* Shifted slightly downward as requested (previously 74%) */
+    left: 21%; 
+    width: 58%; 
+    height: 16%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.sc-label {
+    font-size: 0.5rem; /* Slightly smaller */
+    letter-spacing: 0.25em;
+    color: #4A4036;
+    margin-bottom: 0.5rem; /* Tighter spacing */
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.sc-grid {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem; /* Tighter gap */
+    width: 100%;
+}
+
+.sc-item {
+    background: #F1E9DE; 
+    border: 1px solid rgba(197, 160, 89, 0.15);
+    border-radius: 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0; /* Reduced height */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.sc-item span {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(0.8rem, 3vw, 1.1rem); /* Reduced font size */
+    color: #2D2620;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.sc-item label {
+    font-size: 0.35rem; /* Smaller labels */
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    margin-top: 0.1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
 .edit-response-wrap {
-    margin-top: 3rem;
-    padding-bottom: 2rem; /* Ensure it's not cut off */
+    margin-top: 0;
+    padding: 1.5rem 0 2rem;
+    text-align: center;
+    background: #fff;
 }
 
 .btn-text-only {
@@ -979,6 +1156,42 @@ footer p { margin-bottom: 0.5rem; }
 .btn-change-mind:hover {
     background: #557A54;
     color: white;
+}
+
+/* Integrated Success Action Buttons - Inside Card */
+.success-actions-overlay {
+    position: absolute;
+    bottom: 4.5%; /* Positioned perfectly at the very bottom of the arch */
+    left: 17%;
+    width: 66%;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    z-index: 10;
+}
+
+.btn-card-action {
+    background: transparent;
+    border: none;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #1a1a1a; /* Darker charcoal black for luxury contrast */
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    opacity: 0.85;
+}
+
+.btn-card-action:hover {
+    opacity: 1;
+    color: #000000;
+    transform: translateY(-1px);
+    text-underline-offset: 3px; /* Subtle snap effect */
 }
 
 /* Music Toggle Button */

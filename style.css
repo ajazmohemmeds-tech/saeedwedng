@@ -1116,13 +1116,18 @@ footer p { margin-bottom: 0.5rem; }
 
 .details-left, .details-right {
     flex: 1;
-    text-align: left;
     display: flex;
     flex-direction: column;
 }
 
 .details-left {
-    padding-left: 3cm;
+    text-align: right;
+    padding-right: 1.5rem;
+}
+
+.details-right {
+    text-align: left;
+    padding-left: 1.5rem;
 }
 
 .arabic-p-left {
@@ -1160,6 +1165,7 @@ footer p { margin-bottom: 0.5rem; }
 .details-divider-vertical {
     width: 1px;
     background: var(--border-light);
+    flex-shrink: 0;
 }
 
 .btn-location-mini {
@@ -1439,19 +1445,24 @@ footer p { margin-bottom: 0.5rem; }
     }
 
     .success-details-split {
-        flex-direction: column; /* Stacked for better centering on mobile */
-        gap: 1.5rem;
+        flex-direction: row; /* Split layout restored for symmetrical line */
+        gap: 0; /* Gaps handled by padding for exact centering */
         padding: 1.5rem 0;
-        text-align: center;
-        align-items: center;
+        align-items: stretch;
     }
 
     .details-left {
-        padding-left: 0;
+        padding-right: 1rem;
+        padding-left: 0.5rem;
+    }
+    
+    .details-right {
+        padding-left: 1rem;
+        padding-right: 0.5rem;
     }
 
     .details-divider-vertical {
-        display: none; /* Removed for stacked layout */
+        display: block; /* Visible for symmetrical split */
     }
 
     .details-text {

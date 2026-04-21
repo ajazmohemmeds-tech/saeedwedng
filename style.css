@@ -148,10 +148,24 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: url('hero_bg_new.png?v=3') center center no-repeat;
-    background-size: 100% 100%; /* Force the frame to fit any screen aspect ratio */
     background-color: var(--bg-white);
     overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-width: 90vw; /* Responsive on smaller screens */
+    aspect-ratio: 1024 / 1536; /* Match invitation card aspect ratio */
+    height: auto;
+    object-fit: cover; /* Zooms the video to fill the card shape */
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 4px; /* Matches the card's rounded corners */
 }
 
 .hero-content {
@@ -700,6 +714,61 @@ footer p { margin-bottom: 0.5rem; }
     margin-bottom: 0.5rem;
 }
 
+/* Name Input Section */
+.rsvp-input-group {
+    margin-bottom: 2rem;
+    text-align: left;
+    width: 100%;
+}
+
+.rsvp-label {
+    display: block;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.rsvp-input {
+    width: 100%;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 1.2rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.rsvp-input:focus {
+    outline: none;
+    border-color: #557A54;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(85, 122, 84, 0.05);
+}
+
+.error-msg {
+    font-size: 0.65rem;
+    color: #cc0000;
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+    text-align: left;
+}
+
+.rsvp-input.invalid {
+    border-color: #cc0000;
+    animation: wiggle 0.4s ease;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
 .modal-subtitle {
     font-size: 0.65rem;
     letter-spacing: 0.15em;
@@ -965,55 +1034,154 @@ footer p { margin-bottom: 0.5rem; }
 
 /* Edit Response Button */
 .rsvp-success-graphic-container {
+    padding: 3rem 2rem 4rem;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     position: relative;
-    width: 100%;
-    margin: 0 auto;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    z-index: 20;
 }
 
-.rsvp-success-full-img {
+.success-header-text {
+    margin-bottom: 2rem;
+}
+
+.arabic-blessing-top {
+    font-family: 'Aref Ruqaa', 'Amiri', serif;
+    font-size: 1.8rem;
+    color: #557A54;
+    margin-bottom: 1rem;
+}
+
+.success-names {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 2.8rem;
+    color: var(--text-primary);
+    margin-bottom: 0.8rem;
+    font-weight: 400;
+}
+
+.success-confirmation {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.success-details-split {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 2rem;
     width: 100%;
-    height: auto;
+    margin-bottom: 3rem;
+    padding: 1.8rem 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.details-left, .details-right {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-left {
+    padding-left: 3cm;
+}
+
+.arabic-p-left {
+    font-family: 'Aref Ruqaa', 'Amiri', serif;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.details-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.highlight-date, .highlight-venue {
     display: block;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.05em;
+    font-family: 'Playfair Display', serif; /* Premium title font */
 }
 
-.hotspot-link {
-    position: absolute;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0);
-    transition: background 0.3s ease;
+.highlight-date {
+    font-size: 1.6rem; /* Large and prominent for the wedding date */
 }
 
-.location-hotspot {
-    top: 70.2%;
-    left: 45.8%;
-    width: 30.5%;
-    height: 4.2%;
-    border-radius: 20px;
+.highlight-venue {
+    font-size: 1.1rem; /* Slightly larger for the venue name */
 }
 
-.phone-hotspot {
-    top: 76.5%;
-    left: 47%;
-    width: 32%;
-    height: 3.5%;
+.details-divider-vertical {
+    width: 1px;
+    background: var(--border-light);
 }
 
-/* Integrated Success Countdown Overlay - FIXED POSITION */
+.btn-location-mini {
+    display: inline-block;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: #557A54;
+    text-decoration: none;
+    border: 1px solid rgba(85, 122, 84, 0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    margin: 0.8rem 0;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-location-mini:hover {
+    background: rgba(85, 122, 84, 0.05);
+    border-color: #557A54;
+}
+
+.phone-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    transition: opacity 0.3s ease;
+}
+
+.phone-link:hover {
+    opacity: 0.7;
+}
+
+.success-header-text .modal-title {
+    margin-bottom: 0.2rem;
+}
+
+.success-header-text .modal-subtitle {
+    margin-bottom: 0;
+}
+
+/* Integrated Success Countdown Overlay - RELATIVE FLOW */
 .success-countdown-overlay {
-    position: absolute;
-    top: 78.5%; 
-    left: 21%; 
-    width: 58%; 
-    height: 16%;
+    width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
+    pointer-events: auto;
     z-index: 5;
+    margin-bottom: 3rem;
 }
 
 .sc-label {
@@ -1158,12 +1326,9 @@ footer p { margin-bottom: 0.5rem; }
     color: white;
 }
 
-/* Integrated Success Action Buttons - Inside Card */
+/* Integrated Success Action Buttons - Flow layout */
 .success-actions-overlay {
-    position: absolute;
-    bottom: 4.5%; /* Positioned perfectly at the very bottom of the arch */
-    left: 17%;
-    width: 66%;
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 2rem;
@@ -1197,52 +1362,89 @@ footer p { margin-bottom: 0.5rem; }
 /* Mobile Specific Refinements for RSVP Success Card */
 @media (max-width: 480px) {
     .screen.overlay {
-        align-items: flex-start; /* Lifted upwards to match user's visual preference */
-        padding-top: 5vh; /* 2.2cm equivalent shift upwards */
+        align-items: center; /* Keep centered, but we'll fix the card gap */
     }
 
     .rsvp-modal-card {
         max-height: 85vh; 
         width: 92vw;
-        background: transparent; 
-        box-shadow: none; 
+        background: transparent; /* Remove solid white background to avoid top/bottom gaps show-through */
+        box-shadow: none; /* Shadow handled by graphic container */
     }
 
     .rsvp-success-graphic-container {
-        box-shadow: 0 40px 80px rgba(0,0,0,0.3); 
+        padding: 2.5rem 1.5rem 3.5rem;
+    }
+
+    .success-header-text {
+        margin-bottom: 2rem;
     }
 
     .success-countdown-overlay {
-        top: 86.8%; /* Shifted even lower to SIT perfectly in the arch boxed area */
-        left: 8%;
-        width: 84%;
+        width: 100%;
+        margin-bottom: 2.5rem;
     }
 
     .sc-label {
-        font-size: 0.32rem; 
-        margin-bottom: 0.8rem; /* Increased significantly to avoid overlapping the line above */
-        letter-spacing: 0.22em;
-        opacity: 0.95;
+        font-size: 0.45rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sc-grid {
+        gap: 0.5rem;
     }
 
     .sc-item span {
-        font-size: 0.85rem; 
+        font-size: 1.1rem;
     }
 
-    .sc-item label {
-        font-size: 0.3rem;
+    .arabic-blessing-top {
+        font-size: 1.4rem;
+    }
+
+    .success-names {
+        font-size: 2.2rem;
+    }
+
+    .success-details-split {
+        flex-direction: row; /* Keep split if possible, or stack */
+        gap: 1rem;
+        padding: 1.2rem 0;
+        text-align: left;
+    }
+
+    .details-left {
+        padding-left: 0;
+    }
+
+    .details-divider-vertical {
+        display: block;
+    }
+
+    .details-text {
+        font-size: 0.65rem;
+    }
+
+    .highlight-date {
+        font-size: 1.2rem;
+    }
+
+    .highlight-venue {
+        font-size: 0.9rem;
+    }
+
+    .arabic-p-left {
+        font-size: 1rem;
     }
 
     .success-actions-overlay {
-        bottom: 2%; /* Positioned at the very bottom edge for cleaner look */
-        width: 80%;
-        left: 10%;
-        gap: 0.8rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2rem;
     }
 
     .btn-card-action {
-        font-size: 0.3rem; /* Smallest size for supreme elegance */
-        letter-spacing: 0.1em;
+        font-size: 0.65rem;
     }
 }
 
@@ -1282,3 +1484,147 @@ footer p { margin-bottom: 0.5rem; }
 .music-toggle-btn .hidden {
     display: none;
 }
+
+/* Admin Tool Styles */
+.admin-body {
+    background: #fdfbf7;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    padding: 2rem 1rem;
+    overflow-y: auto !important; /* Force scroll for admin */
+}
+
+.admin-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.admin-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.admin-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-light);
+}
+
+.card-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.admin-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-input-group label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.admin-input-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+.slug-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-micro {
+    padding: 0 0.8rem;
+    font-size: 0.6rem;
+    background: #EBE5D9;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-action-primary {
+    width: 100%;
+    padding: 1rem;
+    background: #557A54;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.btn-action-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.result-area {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border: 1px dashed var(--border-light);
+}
+
+.result-label { font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+.copy-box {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.copy-box input { flex: 1; font-size: 0.8rem; }
+
+.btn-copy {
+    padding: 0 1.5rem;
+    background: var(--text-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Guest Table */
+.mt-4 { margin-top: 2rem; }
+.table-responsive { overflow-x: auto; }
+.guest-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.guest-table th, .guest-table td { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; }
+.guest-table th { background: #fdfbf7; font-size: 0.7rem; color: var(--text-secondary); }
+
+.status-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-pending { background: #EBE5D9; color: #8A7F72; }
+.status-yes { background: #e8f5e9; color: #2e7d32; }
+.status-no { background: #ffebee; color: #c62828; }
+
+.btn-sm { padding: 0.4rem 0.6rem; font-size: 0.65rem; border: 1px solid var(--border-light); border-radius: 4px; background: white; cursor: pointer; margin-right: 0.4rem; transition: background 0.2s; }
+.btn-delete:hover { background: #c62828; color: white; border-color: #c62828; }
+.btn-copy-row:hover { background: #557A54; color: white; border-color: #557A54; }
+
+.hidden { display: none !important; }

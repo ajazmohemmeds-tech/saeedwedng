@@ -43,6 +43,10 @@ if (guestId) {
                         greetingContainer.classList.add('visible');
                     }, 4000);
                 }
+
+                // Pre-fill name in RSVP modal
+                const nameInput = document.getElementById('guest-name-input');
+                if (nameInput) nameInput.value = currentGuestData.name;
             } else {
                 console.warn("Guest ID invalid or not found.");
             }
@@ -269,7 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Close modal when clicking outside the card
+    // Close modal when clicking outside the card disabled as requested
+    /*
     modalScreen.addEventListener('click', (e) => {
         if (e.target === modalScreen) {
             lenis.start(); // Resume background smooth scroll
@@ -280,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (musicToggle) musicToggle.classList.add('hidden');
         }
     });
+    */
     
     if (btnEditResponse) {
         btnEditResponse.addEventListener('click', () => {
@@ -296,11 +302,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (submitRsvpFinal) {
         submitRsvpFinal.addEventListener('click', async () => {
+            const nameInput = document.getElementById('guest-name-input');
+            const nameError = document.getElementById('name-error');
+            const guestName = nameInput ? nameInput.value.trim() : "";
+
+            // Validation check: Name is mandatory
+            if (!guestName) {
+                if (nameInput) {
+                    nameInput.classList.add('invalid');
+                    nameInput.focus();
+                }
+                if (nameError) nameError.classList.remove('hidden');
+                return; // Block submission
+            } else {
+                if (nameInput) nameInput.classList.remove('invalid');
+                if (nameError) nameError.classList.add('hidden');
+            }
+
             // Database integration: Push RSVP to Firebase
             if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
                 try {
                     const guestRef = doc(db, "guests", guestId);
                     await updateDoc(guestRef, {
+                        name: guestName, // Save the provided name
                         status: "Attending",
                         partyCount: familyCount,
                         timestamp: new Date().toISOString()

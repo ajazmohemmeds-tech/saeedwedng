@@ -1004,7 +1004,7 @@ footer p { margin-bottom: 0.5rem; }
 /* Integrated Success Countdown Overlay - FIXED POSITION */
 .success-countdown-overlay {
     position: absolute;
-    top: 78.5%; /* Shifted slightly downward as requested (previously 77.5%) */
+    top: 78.5%; 
     left: 21%; 
     width: 58%; 
     height: 16%;
@@ -1197,48 +1197,52 @@ footer p { margin-bottom: 0.5rem; }
 /* Mobile Specific Refinements for RSVP Success Card */
 @media (max-width: 480px) {
     .screen.overlay {
-        align-items: center; /* Keep centered, but we'll fix the card gap */
+        align-items: flex-start; /* Lifted upwards to match user's visual preference */
+        padding-top: 5vh; /* 2.2cm equivalent shift upwards */
     }
 
     .rsvp-modal-card {
         max-height: 85vh; 
         width: 92vw;
-        background: transparent; /* Remove solid white background to avoid top/bottom gaps show-through */
-        box-shadow: none; /* Shadow handled by graphic container */
+        background: transparent; 
+        box-shadow: none; 
     }
 
     .rsvp-success-graphic-container {
-        box-shadow: 0 40px 100px rgba(0,0,0,0.3); /* Add shadow here for mobile */
+        box-shadow: 0 40px 80px rgba(0,0,0,0.3); 
     }
 
     .success-countdown-overlay {
-        top: 84%; /* Shifted MUCH lower to avoid overlapping middle details */
-        left: 10%;
-        width: 80%;
+        top: 86.8%; /* Shifted even lower to SIT perfectly in the arch boxed area */
+        left: 8%;
+        width: 84%;
     }
 
     .sc-label {
-        font-size: 0.35rem; /* Smaller for elegance */
-        margin-bottom: 0.3rem;
+        font-size: 0.32rem; 
+        margin-bottom: 0.8rem; /* Increased significantly to avoid overlapping the line above */
+        letter-spacing: 0.22em;
+        opacity: 0.95;
     }
 
     .sc-item span {
-        font-size: 0.95rem; /* More compact numbers */
+        font-size: 0.85rem; 
     }
 
     .sc-item label {
-        font-size: 0.35rem;
+        font-size: 0.3rem;
     }
 
     .success-actions-overlay {
-        bottom: 3.5%; /* Positioned carefully at the very bottom edge */
+        bottom: 2%; /* Positioned at the very bottom edge for cleaner look */
         width: 80%;
         left: 10%;
         gap: 0.8rem;
     }
 
     .btn-card-action {
-        font-size: 0.4rem; /* Even smaller for elegance */
+        font-size: 0.3rem; /* Smallest size for supreme elegance */
+        letter-spacing: 0.1em;
     }
 }
 

@@ -218,7 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             modalBackBtn.style.display = 'block';
             if (musicToggle) musicToggle.classList.remove('hidden');
-            showCelebration();
+            
+            // Fix: Ensure canvas is ready for mobile celebration
+            resizeCanvas();
+            setTimeout(showCelebration, 150); 
             
             // Play celebration audio if not muted
             if (!isMuted) {
@@ -338,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitRsvpFinal.disabled = false;
                 
                 // Trigger celebratory burst from the bottom
+                resizeCanvas();
                 triggerBurst();
             }, 500);
         });
@@ -537,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showCelebration = function() {
         if (!canvas || !ctx) return;
+        resizeCanvas();
         createParticles();
         animateConfetti();
     };

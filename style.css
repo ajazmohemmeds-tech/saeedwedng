@@ -618,7 +618,8 @@ footer p { margin-bottom: 0.5rem; }
     width: 100vw;
     height: 100vh;
     z-index: 9999;
-    background: rgba(0, 0, 0, 0.4); /* Dim overlay to match reference */
+    background: rgba(253, 251, 247, 0.98); /* Solid cream background for clarity */
+    backdrop-filter: blur(15px); /* Strong blur to focus on the card */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -650,11 +651,11 @@ footer p { margin-bottom: 0.5rem; }
 
 /* Modal Card */
 .rsvp-modal-card {
-    background: #FFFFFF;
+    background: var(--bg-white);
     width: 95vw;
     max-width: 650px; /* Increased for a bigger 'Grand' feel */
     border-radius: 12px;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.3); /* Deeper shadow for separation */
     position: relative;
     z-index: 20;
     overflow-y: auto; /* Re-enabled scrolling to see the countdown and button! */

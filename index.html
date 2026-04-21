@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saeed & Ansi Wedding Invitation</title>
+    <meta name="description" content="You are cordially invited to celebrate the wedding of Saeed & Ansi at Nirvana Hall.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Pinyon+Script&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Lenis for Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+</head>
+<body class="is-loading">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen overlay">
+        <div class="loading-logo">s & a</div>
+        <div class="loading-bar"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        
+        <!-- HERO SECTION -->
+        <section id="hero" class="reveal" style="background-image: url('hero_bg_new.png?v=5');">
+            <div class="hero-content">
+                <div id="personalized-greeting" class="personalized-greeting hidden"></div>
+                <p class="bismillah-text-arabic">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+                <p class="blessing-text">With the blessings of Allah we are delighted to<br>invite you to the Nikah ceremony of:</p>
+                <h1 class="couple-names-main">Saeed & Ansi</h1>
+                <div class="hero-meta">
+                    <p class="hero-date-small">24TH MAY 2026, 07:00 PM</p>
+                    <p class="hero-location-small">NIRVANA HALL, PALAKKAD, KERALA</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VERSE CARD SECTION -->
+        <section id="verse-card" class="reveal">
+            <div class="section-container">
+                <div class="verse-card-image-wrap">
+                    <img src="verse_card.jpg" alt="Sacred Verse Card" class="verse-card-full-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHEDULE SECTION -->
+        <section id="schedule" class="dark-floral-bg">
+            <div class="section-container">
+                <p class="section-subtitle">HERE'S A SNEAK PEEK OF</p>
+                <h2 class="section-title">OUR SPECIAL DAY'S SCHEDULE</h2>
+                
+                <div class="schedule-grid">
+                    <div class="schedule-item">
+                        <span class="time">07:00 PM</span>
+                        <span class="event">NIKKAH (After Maghrib)</span>
+                    </div>
+                    <div class="schedule-item">
+                        <span class="time">07:30 PM</span>
+                        <span class="event">RECEPTION</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOCATION SECTION -->
+        <section id="venue" class="reveal">
+            <div class="section-container">
+                <h2 class="section-title">LOCATION</h2>
+                <div class="location-layout">
+                    <div class="location-text left">
+                        <p>NIRVANA HALL</p>
+                        <p>PALAKKAD, KERALA</p>
+                    </div>
+                    <div class="location-image">
+                        <img src="venue-new.jpg" alt="Venue">
+                    </div>
+                    <div class="location-text right">
+                        <p>KERALA, INDIA</p>
+                        <p>PIN: 673001</p>
+                    </div>
+                </div>
+                <a href="https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic" target="_blank" class="btn-minimal">GET DIRECTIONS</a>
+            </div>
+        </section>
+
+        <!-- COUNTDOWN SECTION -->
+        <section id="countdown-section" class="dark-floral-bg">
+            <div class="section-container reveal">
+                <p class="section-subtitle">LET THE COUNTDOWN BEGIN</p>
+                <div id="countdown" class="countdown-minimal">
+                    <div class="count-item"><span id="days">00</span><label>DAYS</label></div>
+                    <div class="count-item"><span id="hours">00</span><label>HOURS</label></div>
+                    <div class="count-item"><span id="minutes">00</span><label>MINUTES</label></div>
+                    <div class="count-item"><span id="seconds">00</span><label>SECONDS</label></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP SECTION -->
+        <section id="rsvp" class="reveal">
+            <div class="section-container">
+                <h2 class="section-title">RSVP</h2>
+                <p class="rsvp-intro">Will you be joining us in this celebration of love?</p>
+                <div class="rsvp-actions">
+                    <button id="btn-yes" class="btn-minimal dark">I'M COMING</button>
+                    <button id="btn-no" class="btn-minimal">SORRY, CAN'T MAKE IT</button>
+                </div>
+                <p id="rsvp-message" class="hidden"></p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Celebration & RSVP Modal Screen -->
+    <div id="rsvp-modal-screen" class="screen overlay hidden">
+        <canvas id="confetti-canvas"></canvas>
+        <canvas id="foreground-canvas"></canvas>
+        <div class="rsvp-modal-card" data-lenis-prevent>
+            <!-- Back button for step 1 -->
+            <button id="modal-back-btn" class="modal-back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <!-- STEP 1: Counter -->
+            <div id="rsvp-step-1" class="rsvp-step">
+                <h2 class="modal-title">Wonderful!</h2>
+                <p class="modal-subtitle">DETAILS FOR SAEED & ANSI</p>
+                
+                <div class="counter-box">
+                    <p class="counter-question">How many family members will attend?</p>
+                    <div class="counter-controls">
+                        <button id="btn-minus" class="btn-circle">−</button>
+                        <span id="family-count">1</span>
+                        <button id="btn-plus" class="btn-circle">+</button>
+                    </div>
+                    <p class="counter-subtext">INCLUDING YOURSELF</p>
+                </div>
+                
+                <button id="submit-rsvp-final" class="btn-large-green">SUBMIT RSVP</button>
+            </div>
+
+            <!-- STEP 2: Confirmation & Details -->
+            <div id="rsvp-step-2" class="rsvp-step hidden">
+                <div class="sparkle-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="currentColor"/></svg>
+                </div>
+                <h2 class="modal-title">We Can't Wait!</h2>
+                <p class="modal-subtitle" style="text-transform: none; font-size: 1.1rem; margin-bottom: 0.2rem; color: var(--text-primary); font-family: 'Playfair Display', serif; font-style: italic; letter-spacing: 0;">JazakAllah Khair!</p>
+                <p class="modal-subtitle">SAEED & ANSI</p>
+                
+                <div class="confirmation-box">
+                    <p>Your RSVP has been received! We look forward to celebrating with you.</p>
+                </div>
+                
+                <div class="modal-event-details">
+                    <div class="detail-left">
+                        <span class="detail-insha-allah" style="font-family: 'Aref Ruqaa', 'Amiri', serif; font-size: 1.4rem; color: #557A54; margin-bottom: 0.3rem; display: block; line-height: 1;">إن شاء الله</span>
+                        <span class="detail-number">24</span>
+                        <span class="detail-month">MAY</span>
+                        <span class="detail-label">NIKKAH TIME</span>
+                        <span class="detail-time">07:00 PM</span>
+                    </div>
+                    <div class="detail-divider"></div>
+                    <div class="detail-right">
+                        <h4 class="detail-venue-name">NIRVANA HALL</h4>
+                        <p class="detail-venue-loc">PALAKKAD, KERALA</p>
+                        <a href="https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic" target="_blank" class="btn-outline-small">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> CLICK HERE FOR LOCATION
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="contact-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    9566666144
+                </div>
+                
+                <div class="modal-countdown-wrap">
+                    <p class="modal-countdown-label">COUNTDOWN TO NIKAH</p>
+                    <div id="modal-countdown" class="modal-countdown-minimal">
+                        <div class="m-count-item"><span id="m-days">00</span><label>DAYS</label></div>
+                        <div class="m-count-item"><span id="m-hours">00</span><label>HOURS</label></div>
+                        <div class="m-count-item"><span id="m-minutes">00</span><label>MINUTES</label></div>
+                        <div class="m-count-item"><span id="m-seconds">00</span><label>SECONDS</label></div>
+                    </div>
+                </div>
+
+                <div class="edit-response-wrap">
+                    <button id="btn-edit-response" class="btn-text-only">EDIT RESPONSE</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Decline Screen -->
+            <div id="rsvp-step-3" class="rsvp-step hidden">
+                <div class="decline-flower-icon">🌸</div>
+                <h2 class="modal-title" style="margin-bottom: 0.2rem;">We'll Miss You</h2>
+                <p class="modal-subtitle" style="margin-bottom: 2rem;">WE UNDERSTAND</p>
+                
+                <div class="decline-msg-box">
+                    <p>Thank you so much for letting us know. Though you won't be with us in person, you'll be in our hearts as we celebrate this special day.</p>
+                </div>
+                
+                <div class="decline-event-card">
+                    <div class="decline-event-row">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span>24 May 2026 · 07:00 PM</span>
+                    </div>
+                    <div class="decline-event-row" style="border-top: 1px solid var(--border-light); margin-top: 1rem; padding-top: 1rem; align-items: flex-start;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 0.2rem; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-weight:600; color:var(--text-primary);">Nirvana Hall,</span>
+                            <span style="color:var(--text-secondary); line-height: 1.4;">nirvana hall mercy college junction adithyapuram pallippuram palakkad kerala</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-change-mind" class="btn-change-mind" style="margin-bottom: 1.5rem;">CHANGE MY MIND — I'LL ATTEND!</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js?v=4"></script>
+    <!-- Music Toggle -->
+    <button id="music-toggle" class="music-toggle-btn hidden" aria-label="Toggle Music">
+        <div class="icon-on">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+        </div>
+        <div class="icon-off hidden">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+        </div>
+    </button>
+</body>
+</html>

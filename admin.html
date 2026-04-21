@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saeed & Ansi | Admin Dashboard</title>
+    <!-- Use Tailwind CSS for fast internal dashboard styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+        .guest-row:hover { background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="min-h-screen bg-gray-100 p-8">
+        <div class="max-w-6xl mx-auto">
+            
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight text-gray-900">Wedding Dashboard</h1>
+                    <p class="text-sm text-gray-500 mt-1">Saeed & Ansi • Real-time RSVP Tracking</p>
+                </div>
+                <div class="bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
+                    <span class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Attending</span>
+                    <p class="text-2xl font-bold text-green-600 mt-1" id="total-count-badge">0</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Add Guest Form -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Add New Guest</h2>
+                        <form id="add-guest-form" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Guest / Family Name</label>
+                                <input type="text" id="guest-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" placeholder="e.g. Aslam Family">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
+                                <input type="tel" id="guest-phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" placeholder="e.g. +91 9876543210">
+                            </div>
+                            <button type="submit" id="btn-add-guest" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 mt-2">
+                                Generate Unique Link
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Guest List Table -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h2 class="text-lg font-semibold text-gray-900">Guest List & RSVPs</h2>
+                            <span id="list-count" class="text-sm text-gray-500">0 records</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-white border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
+                                        <th class="px-6 py-4 font-medium">Guest Name</th>
+                                        <th class="px-6 py-4 font-medium">Status</th>
+                                        <th class="px-6 py-4 font-medium text-center">Party</th>
+                                        <th class="px-6 py-4 font-medium text-right">Invitation Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="guest-table-body" class="divide-y divide-gray-200">
+                                    <!-- Rows injected via JS -->
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-8 text-center text-gray-400 text-sm">
+                                            Loading Firebase database...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & Custom Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        // Firebase configuration provided by User
+        const firebaseConfig = {
+            apiKey: "AIzaSyDABXfuMeGsTO1rxGihBTDGauIJcZ1fJGU",
+            authDomain: "saeed-anzi-wedding.firebaseapp.com",
+            projectId: "saeed-anzi-wedding",
+            storageBucket: "saeed-anzi-wedding.firebasestorage.app",
+            messagingSenderId: "889701160746",
+            appId: "1:889701160746:web:33a62691f510466b46f053",
+            measurementId: "G-RFQDD5Q52V"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Elements
+        const addGuestForm = document.getElementById('add-guest-form');
+        const guestNameInput = document.getElementById('guest-name');
+        const guestPhoneInput = document.getElementById('guest-phone');
+        const tableBody = document.getElementById('guest-table-body');
+        const countBadge = document.getElementById('total-count-badge');
+        const listCount = document.getElementById('list-count');
+        const btnAdd = document.getElementById('btn-add-guest');
+
+        // URL Base for generated links (uses current domain for generic flexibility)
+        // If testing locally on index.html:
+        const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', 'index.html') + '?guest=';
+
+        // Add Guest Handler
+        addGuestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = guestNameInput.value.trim();
+            const phone = guestPhoneInput.value.trim();
+            
+            if (!name) return;
+
+            btnAdd.innerText = "Generating...";
+            btnAdd.disabled = true;
+
+            try {
+                // To allow sort by createdAt, we need to create an index in Firebase if using query(). 
+                // Using Date.now() as a simple timestamp
+                await addDoc(collection(db, "guests"), {
+                    name: name,
+                    phone: phone,
+                    status: "Pending Response",
+                    partyCount: null,
+                    timestamp: Date.now()
+                });
+
+                guestNameInput.value = '';
+                guestPhoneInput.value = '';
+            } catch(error) {
+                alert("Error adding guest to database: " + error.message);
+            } finally {
+                btnAdd.innerText = "Generate Unique Link";
+                btnAdd.disabled = false;
+                guestNameInput.focus();
+            }
+        });
+
+        // Real-time listener for Grid
+        const q = query(collection(db, "guests"), orderBy("timestamp", "desc"));
+        
+        onSnapshot(q, (snapshot) => {
+            tableBody.innerHTML = ''; // Clear table
+            let totalConfirmed = 0;
+            let recordCount = 0;
+
+            if (snapshot.empty) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No guests added yet. Add a guest to generate your first link!</td></tr>`;
+                countBadge.innerText = "0";
+                listCount.innerText = "0 records";
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                recordCount++;
+                const guest = doc.data();
+                const guestId = doc.id;
+                const link = baseUrl + guestId;
+                
+                let statusColor = "bg-yellow-100 text-yellow-800";
+                if (guest.status === "Attending") {
+                    statusColor = "bg-green-100 text-green-800";
+                    totalConfirmed += (Number(guest.partyCount) || 0);
+                } else if (guest.status === "Not Attending") {
+                    statusColor = "bg-red-100 text-red-800";
+                }
+
+                // Row Template
+                const tr = document.createElement('tr');
+                tr.className = "guest-row border-b border-gray-100 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-gray-900">${guest.name}</div>
+                        <div class="text-xs text-gray-500 mt-1">${guest.phone || 'No phone'}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                            ${guest.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center font-medium text-gray-900">
+                        ${guest.partyCount !== null ? guest.partyCount : '-'}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <input type="text" readonly value="${link}" class="w-48 text-xs bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none text-gray-500 cursor-text">
+                            <button onclick="navigator.clipboard.writeText('${link}'); this.innerText='Copied!'; setTimeout(() => this.innerText='Copy', 2000);" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded font-medium transition">
+                                Copy
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Update stats
+            countBadge.innerText = totalConfirmed;
+            listCount.innerText = `${recordCount} records`;
+        }, (error) => {
+            console.error("Firebase Snapshot Error:", error);
+            tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500">Error connecting to database. Wait a few seconds, or check Firestore rules!</td></tr>`;
+        });
+
+    </script>
+</body>
+</html>

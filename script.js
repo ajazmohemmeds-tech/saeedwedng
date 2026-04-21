@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -361,7 +361,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Failed to save RSVP to database:", e);
                 }
             } else {
-                console.log("No valid guest link detected—saving locally only (Fallback).");
+                // GENERAL GUEST (No exclusive link) - Also save to dashboard!
+                try {
+                    // Generate a semi-unique ID for the general guest
+                    const generalId = "walk-in-" + guestName.toLowerCase().replace(/\s+/g, '-') + "-" + Date.now().toString().slice(-4);
+                    const guestRef = doc(db, "guests", generalId);
+                    await setDoc(guestRef, {
+                        name: guestName,
+                        status: "Attending",
+                        partyCount: familyCount,
+                        timestamp: new Date().toISOString(),
+                        isGeneral: true
+                    });
+                } catch(e) {
+                    console.error("Failed to save general guest RSVP:", e);
+                }
             }
 
             // Store and calculate data locally

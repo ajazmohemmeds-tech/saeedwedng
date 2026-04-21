@@ -23,18 +23,22 @@ try {
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lenis Smooth Scroll
-    const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-        lerp: 0.1
-    });
+    try {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            lerp: 0.1
+        });
 
-    function raf(time) {
-        lenis.raf(time);
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
         requestAnimationFrame(raf);
+    } catch(e) {
+        console.warn("Lenis not available or failed:", e);
     }
-    requestAnimationFrame(raf);
 
     const nameInput = document.getElementById('new-guest-name');
     const idInput = document.getElementById('new-guest-id');
@@ -118,6 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }));
 
                 log("Guest saved successfully to Firebase!", "success");
+                
+                // CLEAR INPUTS after success
+                nameInput.value = '';
+                idInput.value = '';
 
                 const baseUrl = window.location.href.split('admin.html')[0];
                 const finalLink = `${baseUrl}?guest=${id}`;

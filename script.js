@@ -206,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnYes && btnNo) {
         btnYes.addEventListener('click', () => {
             lenis.stop(); // Stop background smooth scroll
+            document.body.classList.add('no-scroll');
             modalScreen.classList.remove('hidden');
             rsvpStep1.classList.remove('hidden');
             rsvpStep1.style.opacity = '1';
@@ -227,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         btnNo.addEventListener('click', async () => {
             lenis.stop(); // Stop background smooth scroll
+            document.body.classList.add('no-scroll');
             // Database integration: Push Decline to Firebase
             if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
                 try {

@@ -37,7 +37,7 @@ body {
     overflow-x: hidden;
 }
 
-body.is-loading {
+body.is-loading, body.no-scroll {
     overflow: hidden !important;
     height: 100vh;
     touch-action: none;
@@ -1004,7 +1004,7 @@ footer p { margin-bottom: 0.5rem; }
 /* Integrated Success Countdown Overlay - FIXED POSITION */
 .success-countdown-overlay {
     position: absolute;
-    top: 77.5%; /* Shifted slightly downward as requested (previously 74%) */
+    top: 78.5%; /* Shifted slightly downward as requested (previously 77.5%) */
     left: 21%; 
     width: 58%; 
     height: 16%;
@@ -1202,7 +1202,7 @@ footer p { margin-bottom: 0.5rem; }
     }
 
     .success-countdown-overlay {
-        top: 72%; /* Lifted higher on mobile to avoid squeezing */
+        top: 73%; /* Shifted slightly downward as requested (previously 72%) */
         left: 10%;
         width: 80%;
     }

@@ -91,22 +91,33 @@ if (loader) {
     }, 1500); // Reduced total loader wait time to make it feel snappier
 }
 
-// 2. Initialize Lenis Smooth Scroll
+// 2. Initialize Lenis Smooth Scroll (Main Page)
 const lenis = new Lenis({
+    duration: 1.5, // Increased for a more 'luxury' feel
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    wheelMultiplier: 1.0,
+    touchMultiplier: 1.8, // High momentum for mobile
+    lerp: 0.06, // Heavier, smoother momentum
+});
+
+// 2b. Initialize Lenis for RSVP Modal (Everything smooth!)
+const modalLenis = new Lenis({
+    wrapper: document.querySelector('.rsvp-modal-card'),
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    wheelMultiplier: 1.1,
-    touchMultiplier: 1.5, // Enhances "momentum" feeling on mobile
-    lerp: 0.1, // Smooth interpolation
+    touchMultiplier: 1.5,
 });
 
 function raf(time) {
     lenis.raf(time);
+    modalLenis.raf(time);
     requestAnimationFrame(raf);
 }
 requestAnimationFrame(raf);
-lenis.stop(); // Lock scroll initially for the smooth loading screen
+lenis.stop();
+modalLenis.stop(); // Keep modal scroll locked until opened
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -229,6 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
             rsvpStep1.style.opacity = '1';
             rsvpStep2.classList.add('hidden');
             
+            // Start modal-specific smooth scroll
+            modalLenis.start();
+            
             // Fix: Explicitly hide the decline step
             const step3 = document.getElementById('rsvp-step-3');
             if(step3) step3.classList.add('hidden');
@@ -278,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalBackBtn) {
         modalBackBtn.addEventListener('click', () => {
             lenis.start(); // Resume background smooth scroll
+            modalLenis.stop(); // Stop modal-specific smooth scroll
             modalScreen.classList.add('hidden');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles = [];

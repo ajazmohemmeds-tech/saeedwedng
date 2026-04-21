@@ -187,7 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Sort by timestamp (newest first)
             guests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
+            // Stats calculation variables
+            let totalInvites = guests.length;
+            let pending = 0;
+            let responses = 0;
+            let attending = 0;
+            let totalHeadcount = 0;
+
             guests.forEach((guest) => {
+                // Calculate stats
+                if (!guest.status || guest.status === 'Not Responded' || guest.status === 'Pending') {
+                    pending++;
+                } else if (guest.status === 'Attending' || guest.status === 'Not Attending') {
+                    responses++;
+                    if (guest.status === 'Attending') {
+                        attending++;
+                        totalHeadcount += (parseInt(guest.partyCount) || 0);
+                    }
+                }
+
                 const tr = document.createElement('tr');
                 
                 let statusClass = 'status-pending';
@@ -206,6 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 guestListBody.appendChild(tr);
             });
+
+            // Update Stats UI
+            const updateStat = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            updateStat('stat-total-invites', totalInvites);
+            updateStat('stat-pending', pending);
+            updateStat('stat-responses', responses);
+            updateStat('stat-attending', attending);
+            updateStat('stat-total-headcount', totalHeadcount);
 
             // Add events to row buttons
             document.querySelectorAll('.btn-copy-row').forEach(btn => {

@@ -590,16 +590,15 @@ footer p { margin-bottom: 0.5rem; }
     #hero {
         padding: 0;
         justify-content: center;
-        min-height: 100vh;
-        min-height: 100dvh;
+        min-height: auto;
     }
 
     #verse-card {
-        padding: 4rem 0;
+        padding: 1.5rem 0;
     }
     
     .hero-content {
-        padding: 6rem 1.5rem; /* Balanced fixed padding instead of vh */
+        padding: 2.5rem 1.5rem; /* Tighter padding for mobile */
         height: auto;
     }
 }
@@ -618,7 +617,7 @@ footer p { margin-bottom: 0.5rem; }
     width: 100vw;
     height: 100vh;
     z-index: 9999;
-    background: rgba(253, 251, 247, 0.98); /* Solid cream background for clarity */
+    background: #FDFBF7; /* SOLID CREAM background for perfect mobile readability */
     backdrop-filter: blur(15px); /* Strong blur to focus on the card */
     display: flex;
     justify-content: center;

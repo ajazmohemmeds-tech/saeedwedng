@@ -13,8 +13,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let app, db;
+try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+} catch (e) {
+    console.error("Firebase init error:", e);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('new-guest-name');
@@ -25,6 +30,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const linkInput = document.getElementById('generated-link');
     const btnCopy = document.getElementById('btn-copy-link');
     const guestListBody = document.getElementById('guest-list-body');
+    const debugLog = document.getElementById('debug-log');
+
+    // Debug Logger
+    const log = (msg, type = "info") => {
+        if (!debugLog) return;
+        const p = document.createElement('p');
+        p.className = `debug-msg ${type}`;
+        p.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        debugLog.appendChild(p);
+        debugLog.scrollTop = debugLog.scrollHeight;
+    };
+
+    log("Admin Tool Loaded. Checking Firebase...", "info");
+    if (!db) {
+        log("CRITICAL: Firebase DB failed to initialize!", "error");
+    } else {
+        log("Firebase DB initialized successfully.", "success");
+    }
+
+    // Helper to prevent hanging if Firebase is not responding
+    const withTimeout = (promise, ms = 8000) => {
+        const timeout = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("DATABASE_TIMEOUT")), ms)
+        );
+        return Promise.race([promise, timeout]);
+    };
 
     // Auto-generate slug from name
     const generateSlug = (name) => {
@@ -61,15 +92,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
+                log("Saving guest: " + id, "info");
                 btnSave.innerText = 'SAVING...';
                 btnSave.disabled = true;
 
-                await setDoc(doc(db, "guests", id), {
+                await withTimeout(setDoc(doc(db, "guests", id), {
                     name: name,
                     status: "Not Responded",
                     partyCount: 0,
                     timestamp: new Date().toISOString()
-                });
+                }));
+
+                log("Guest saved successfully to Firebase!", "success");
 
                 const baseUrl = window.location.href.split('admin.html')[0];
                 const finalLink = `${baseUrl}?guest=${id}`;
@@ -83,8 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadGuests(); // Refresh list
             } catch (e) {
                 console.error("Error saving guest:", e);
-                alert("Error saving guest. Check console.");
+                btnSave.innerText = 'GENERATE & SAVE LINK';
                 btnSave.disabled = false;
+
+                if (e.message === "DATABASE_TIMEOUT") {
+                    alert("⚠️ CONNECTION TIMEOUT: Firebase is not responding. Please check if you have created the 'Firestore Database' in your console and set Rules to 'Test Mode'.");
+                } else if (e.code === 'permission-denied') {
+                    alert("⚠️ PERMISSION DENIED: Your Firebase rules are blocking the save. Please set your Firestore rules to 'Test Mode'.");
+                } else {
+                    alert("⚠️ ERROR: " + e.message);
+                }
             }
         });
     }
@@ -105,13 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
         guestListBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
         
         try {
-            const querySnapshot = await getDocs(collection(db, "guests"));
+            log("Fetching guest list from Firestore...", "info");
+            const querySnapshot = await withTimeout(getDocs(collection(db, "guests")));
+            log("Fetch complete. Found " + querySnapshot.size + " docs.", "success");
             guestListBody.innerHTML = '';
             
             const guests = [];
             querySnapshot.forEach((docSnap) => {
                 guests.push({ id: docSnap.id, ...docSnap.data() });
             });
+
+            if (guests.length === 0) {
+                guestListBody.innerHTML = '<tr><td colspan="5">No guests found yet. Add your first guest above!</td></tr>';
+                return;
+            }
 
             // Sort by timestamp (newest first)
             guests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -159,8 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         } catch (e) {
-            console.error("Error loading guests:", e);
-            guestListBody.innerHTML = '<tr><td colspan="5">Error loading data.</td></tr>';
+            log("Fetch ERROR: " + e.message, "error");
+            if (e.message === "DATABASE_TIMEOUT") {
+                guestListBody.innerHTML = '<tr><td colspan="5" style="color:#cc0000">⚠️ TIMEOUT: Could not reach Firebase. Check your console.</td></tr>';
+            } else {
+                guestListBody.innerHTML = '<tr><td colspan="5" style="color:#cc0000">⚠️ ERROR: ' + e.message + '</td></tr>';
+            }
         }
     };
 

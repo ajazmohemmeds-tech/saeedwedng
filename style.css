@@ -1628,3 +1628,31 @@ footer p { margin-bottom: 0.5rem; }
 .btn-copy-row:hover { background: #557A54; color: white; border-color: #557A54; }
 
 .hidden { display: none !important; }
+
+/* Debug Console Styles */
+.debug-container {
+    background: #1e1e1e !important;
+    color: #00ff00 !important;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 1.5rem !important;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.debug-container .card-section-title {
+    color: #00ff00;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.debug-msg {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+    padding-bottom: 0.3rem;
+    word-break: break-all;
+}
+
+.debug-msg.error { color: #ff5555; }
+.debug-msg.success { color: #55ff55; }
+.debug-msg.info { color: #55f0ff; }
+.debug-msg.warn { color: #ffff55; }

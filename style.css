@@ -389,7 +389,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 
 /* Countdown */
 .dark-floral-bg {
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('floral.png') center/cover fixed;
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('floral.png') center/cover scroll;
     color: #FFF;
     padding: clamp(6rem, 15vw, 10rem) 0; /* Responsive padding */
 }
@@ -400,10 +400,15 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     gap: clamp(1.5rem, 5vw, 4rem);
     flex-wrap: wrap;
 }
-
 @media (max-width: 480px) {
     .countdown-minimal {
         gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .dark-floral-bg {
+        background-attachment: fixed;
     }
 }
 
@@ -600,6 +605,7 @@ footer p { margin-bottom: 0.5rem; }
         font-size: 0.5rem;
     }
 
+    
     
     #hero {
         padding: 0;
@@ -1386,7 +1392,7 @@ footer p { margin-bottom: 0.5rem; }
 }
 
 /* Mobile Specific Refinements for RSVP Success Card */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .screen.overlay {
         align-items: center; /* Keep centered, but we'll fix the card gap */
     }
@@ -1433,10 +1439,11 @@ footer p { margin-bottom: 0.5rem; }
     }
 
     .success-details-split {
-        flex-direction: row; /* Keep split if possible, or stack */
-        gap: 1rem;
-        padding: 1.2rem 0;
-        text-align: left;
+        flex-direction: column; /* Stacked for better centering on mobile */
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+        text-align: center;
+        align-items: center;
     }
 
     .details-left {
@@ -1444,7 +1451,7 @@ footer p { margin-bottom: 0.5rem; }
     }
 
     .details-divider-vertical {
-        display: block;
+        display: none; /* Removed for stacked layout */
     }
 
     .details-text {

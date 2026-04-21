@@ -417,6 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('confetti-canvas');
     const fCanvas = document.getElementById('foreground-canvas');
     let ctx, fCtx, particles = [], fParticles = [];
+    let celebrationStartTime = 0;
+    let celebrationIntensity = 1;
     
     function showCelebration() {
         if (!canvas) return;
@@ -429,6 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function triggerBurst() {
         if (!canvas) return;
+        celebrationStartTime = Date.now(); // Reset timer for the main success burst
         showCelebration(); 
         // Background Burst (behind card)
         for (let i = 0; i < 40; i++) {
@@ -498,8 +501,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.opacity -= 0.008;
             } else {
                 if (this.y > (canvas ? canvas.height : window.innerHeight)) {
-                    this.y = -10;
-                    this.x = Math.random() * (canvas ? canvas.width : window.innerWidth);
+                    // Only recycle particles if celebration is still active
+                    if (Math.random() < celebrationIntensity) {
+                        this.y = -10;
+                        this.x = Math.random() * (canvas ? canvas.width : window.innerWidth);
+                    } else {
+                        // Let it fall out and die (will be filtered out in animate loop)
+                        this.opacity = 0;
+                    }
                 }
             }
         }
@@ -589,15 +598,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if ((particles.length > 0 || fParticles.length > 0) && !modalScreen.classList.contains('hidden')) {
+            // Update Intensity based on time
+            const elapsed = (Date.now() - celebrationStartTime) / 1000;
+            if (elapsed < 3) {
+                celebrationIntensity = 1;
+            } else if (elapsed < 15) {
+                // Linear fade from 3s to 15s (takes 12s to fade)
+                celebrationIntensity = Math.max(0, 1 - (elapsed - 3) / 12);
+            } else {
+                celebrationIntensity = 0;
+            }
+
             // Remove dead particles and fireworks to keep performance high
             particles = particles.filter(p => {
                 if (p instanceof Firework) return p.particles.length > 0;
-                return !p.opacity || p.opacity > 0;
+                return p.opacity > 0;
             });
             fParticles = fParticles.filter(p => p.opacity > 0);
 
-            // Random ambient firework
-            if (Math.random() < 0.03 && !rsvpStep2.classList.contains('hidden')) {
+            // Random ambient firework - probability decreases with intensity
+            if (Math.random() < (0.03 * celebrationIntensity) && !rsvpStep2.classList.contains('hidden')) {
                 particles.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.5));
             }
 
@@ -607,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showCelebration = function() {
         if (!canvas || !ctx) return;
+        celebrationStartTime = Date.now(); // Reset timer
         resizeCanvas();
         createParticles();
         animateConfetti();

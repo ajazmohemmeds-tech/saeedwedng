@@ -157,6 +157,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     height: auto;
     object-fit: cover;
     border-radius: 4px;
+    opacity: 0.4;
     will-change: transform;
     backface-visibility: hidden;
     transform: translateZ(0); /* Force GPU layer */
@@ -174,6 +175,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: #000; /* Default text color to black for this section */
 }
 
 /* Old floral styles removed */
@@ -196,7 +198,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .guest-subtitle {
     font-size: 0.8rem;
     letter-spacing: 0.3em;
-    color: var(--text-secondary);
+    color: #000;
     text-transform: uppercase;
     margin-bottom: 0.5rem;
     font-weight: 600;
@@ -205,7 +207,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .bismillah-text-arabic {
     font-family: 'Aref Ruqaa', 'Amiri', serif;
     font-size: clamp(1.8rem, 8vw, 2.6rem); /* Slightly smaller to fit perfectly */
-    color: var(--text-primary);
+    color: #000;
     margin-bottom: 0.8rem;
     letter-spacing: normal;
     line-height: 1.2;
@@ -217,7 +219,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .blessing-text {
     font-size: 0.85rem;
     letter-spacing: 0.05em;
-    color: var(--text-secondary);
+    color: #000;
     margin-bottom: 1.2rem;
     font-style: italic;
     font-family: 'Inter', sans-serif;
@@ -228,7 +230,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .couple-names-main {
     font-size: clamp(2.4rem, 9vw, 5rem);
     letter-spacing: 0.02em;
-    color: var(--text-primary);
+    color: #000;
     margin-bottom: 1.5rem; /* Balanced spacing */
     line-height: 1.1;
     white-space: nowrap;
@@ -242,7 +244,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .hero-date-small, .hero-location-small {
     font-size: 0.65rem; /* Much smaller for that premium stationary feel */
     letter-spacing: 0.25em;
-    color: var(--text-primary);
+    color: #000;
     text-transform: uppercase;
     margin-bottom: 0.8rem;
     font-family: 'Inter', sans-serif;
@@ -285,7 +287,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 
 /* Verse Card Section */
 #verse-card {
-    padding: 1rem 0 5rem;
+    padding: 0 0 5rem;
     background: var(--bg-white);
     text-align: center;
 }
@@ -452,11 +454,22 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 .arabic-quote-footer {
     font-family: 'Aref Ruqaa', 'Amiri', serif;
     font-size: clamp(1.2rem, 5vw, 2.2rem);
-    color: var(--text-primary);
-    line-height: 1.8;
+    color: #000;
+    line-height: 1.35; /* Standard gap */
     margin-bottom: 2rem;
     direction: rtl;
-    opacity: 0.8;
+    opacity: 1; /* Fully opaque for contrast */
+}
+
+.verse-ornament-inline {
+    display: inline-block;
+    vertical-align: middle;
+    width: clamp(28px, 6vw, 38px);
+    height: auto;
+    margin-right: 12px;
+    opacity: 0.95;
+    mix-blend-mode: multiply;
+    transform: translateY(-2px); /* Fine-tune vertical alignment */
 }
 
 .footer-divider-ornament {
@@ -590,12 +603,28 @@ footer p { margin-bottom: 0.5rem; }
     
     #hero {
         padding: 0;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        min-height: auto;
+        overflow: hidden;
+        background: var(--bg-white); /* Match the site's cream background */
+    }
+
+    .hero-video {
+        width: 100vw;
+        max-width: none;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
+        opacity: 0.4; /* Set to requested level */
     }
 
     #verse-card {
-        padding: 1.5rem 0;
+        padding: 0;
     }
     
     .hero-content {

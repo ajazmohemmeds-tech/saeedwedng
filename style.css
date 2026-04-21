@@ -1196,35 +1196,49 @@ footer p { margin-bottom: 0.5rem; }
 
 /* Mobile Specific Refinements for RSVP Success Card */
 @media (max-width: 480px) {
+    .screen.overlay {
+        align-items: center; /* Keep centered, but we'll fix the card gap */
+    }
+
     .rsvp-modal-card {
-        max-height: 85vh; /* Slightly tighter for mobile comfort */
-        width: 90vw;
+        max-height: 85vh; 
+        width: 92vw;
+        background: transparent; /* Remove solid white background to avoid top/bottom gaps show-through */
+        box-shadow: none; /* Shadow handled by graphic container */
+    }
+
+    .rsvp-success-graphic-container {
+        box-shadow: 0 40px 100px rgba(0,0,0,0.3); /* Add shadow here for mobile */
     }
 
     .success-countdown-overlay {
-        top: 73%; /* Shifted slightly downward as requested (previously 72%) */
+        top: 84%; /* Shifted MUCH lower to avoid overlapping middle details */
         left: 10%;
         width: 80%;
     }
 
     .sc-label {
-        font-size: 0.45rem;
-        margin-bottom: 0.4rem;
+        font-size: 0.35rem; /* Smaller for elegance */
+        margin-bottom: 0.3rem;
     }
 
     .sc-item span {
-        font-size: 1.1rem;
+        font-size: 0.95rem; /* More compact numbers */
+    }
+
+    .sc-item label {
+        font-size: 0.35rem;
     }
 
     .success-actions-overlay {
-        bottom: 8%; /* Lifted significantly higher to avoid overlapping the bottom border */
+        bottom: 3.5%; /* Positioned carefully at the very bottom edge */
         width: 80%;
         left: 10%;
-        gap: 1rem;
+        gap: 0.8rem;
     }
 
     .btn-card-action {
-        font-size: 0.5rem;
+        font-size: 0.4rem; /* Even smaller for elegance */
     }
 }
 

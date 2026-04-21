@@ -1194,6 +1194,40 @@ footer p { margin-bottom: 0.5rem; }
     text-underline-offset: 3px; /* Subtle snap effect */
 }
 
+/* Mobile Specific Refinements for RSVP Success Card */
+@media (max-width: 480px) {
+    .rsvp-modal-card {
+        max-height: 85vh; /* Slightly tighter for mobile comfort */
+        width: 90vw;
+    }
+
+    .success-countdown-overlay {
+        top: 72%; /* Lifted higher on mobile to avoid squeezing */
+        left: 10%;
+        width: 80%;
+    }
+
+    .sc-label {
+        font-size: 0.45rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .sc-item span {
+        font-size: 1.1rem;
+    }
+
+    .success-actions-overlay {
+        bottom: 8%; /* Lifted significantly higher to avoid overlapping the bottom border */
+        width: 80%;
+        left: 10%;
+        gap: 1rem;
+    }
+
+    .btn-card-action {
+        font-size: 0.5rem;
+    }
+}
+
 /* Music Toggle Button */
 .music-toggle-btn {
     position: fixed;

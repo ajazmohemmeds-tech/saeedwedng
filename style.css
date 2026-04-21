@@ -15,7 +15,6 @@
 }
 
 html {
-    scroll-behavior: smooth;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
@@ -140,10 +139,9 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 /* Hero Section */
 #hero {
     position: relative;
-    padding: clamp(4rem, 15vh, 6rem) 2rem;
+    padding: 1.5rem 2rem 0;
     text-align: center;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -153,12 +151,9 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .hero-video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     width: 600px;
-    max-width: 90vw; /* Responsive on smaller screens */
+    max-width: 92vw; /* Responsive on smaller screens */
     aspect-ratio: 1024 / 1536; /* Match invitation card aspect ratio */
     height: auto;
     object-fit: cover; /* Zooms the video to fill the card shape */
@@ -169,8 +164,12 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .hero-content {
-    position: relative;
+    position: absolute;
+    top: 52%; /* Slightly lower than center for visual balance */
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 2;
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
     display: flex;
@@ -208,7 +207,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     font-family: 'Aref Ruqaa', 'Amiri', serif;
     font-size: clamp(1.8rem, 8vw, 2.6rem); /* Slightly smaller to fit perfectly */
     color: var(--text-primary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
     letter-spacing: normal;
     line-height: 1.2;
     margin-top: 0; /* Let container padding handle it */
@@ -220,7 +219,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     font-size: 0.85rem;
     letter-spacing: 0.05em;
     color: var(--text-secondary);
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     font-style: italic;
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
@@ -231,14 +230,14 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     font-size: clamp(2.4rem, 9vw, 5rem);
     letter-spacing: 0.02em;
     color: var(--text-primary);
-    margin-bottom: 2.5rem; /* Balanced spacing */
+    margin-bottom: 1.5rem; /* Balanced spacing */
     line-height: 1.1;
     white-space: nowrap;
 }
 
 .hero-meta {
-    margin-top: auto;
-    margin-bottom: 3rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .hero-date-small, .hero-location-small {
@@ -287,7 +286,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 
 /* Verse Card Section */
 #verse-card {
-    padding: clamp(4rem, 10vw, 8rem) 0;
+    padding: 1rem 0 5rem;
     background: var(--bg-white);
     text-align: center;
 }
@@ -1656,3 +1655,24 @@ footer p { margin-bottom: 0.5rem; }
 .debug-msg.success { color: #55ff55; }
 .debug-msg.info { color: #55f0ff; }
 .debug-msg.warn { color: #ffff55; }
+
+/* Lenis Recommended CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

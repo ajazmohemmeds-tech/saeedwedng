@@ -65,11 +65,11 @@ if (loader) {
         loader.style.transition = 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s';
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
+        lenis.start(); // Unlock scroll as soon as loader starts fading
+        document.body.classList.remove('is-loading'); // Fully enable native scrolling
         
         setTimeout(() => {
-            loader.style.display = 'none';
-            document.body.classList.remove('is-loading'); // Re-enable touch/scroll
-            lenis.start(); // Enable scroll once intro is finished
+            loader.style.display = 'none'; // Remove from DOM after fade
             
             // Intersection Observer for reactive section reveals
             const revealObserver = new IntersectionObserver((entries) => {
@@ -93,9 +93,12 @@ if (loader) {
 
 // 2. Initialize Lenis Smooth Scroll
 const lenis = new Lenis({
-    duration: 1.0,
+    duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
+    wheelMultiplier: 1.1,
+    touchMultiplier: 1.5, // Enhances "momentum" feeling on mobile
+    lerp: 0.1, // Smooth interpolation
 });
 
 function raf(time) {

@@ -70,20 +70,30 @@ if (loader) {
             loader.style.display = 'none';
             document.body.classList.remove('is-loading'); // Re-enable touch/scroll
             lenis.start(); // Enable scroll once intro is finished
-            // Start section reveals after loader is gone
+            
+            // Intersection Observer for reactive section reveals
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
             document.querySelectorAll('.reveal').forEach(el => {
-                el.classList.add('active');
+                revealObserver.observe(el);
             });
-            // Ensure first sections are seen
+
+            // Ensure hero title is seen
             const heroTitle = document.querySelector('.hero-title');
             if(heroTitle) heroTitle.style.opacity = '1';
         }, 1500);
-    }, 3500);
+    }, 1500); // Reduced total loader wait time to make it feel snappier
 }
 
 // 2. Initialize Lenis Smooth Scroll
 const lenis = new Lenis({
-    duration: 1.2,
+    duration: 1.0,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
 });

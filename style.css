@@ -61,13 +61,11 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 /* Smooth Section Reveal Animation */
 .reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 1.2s cubic-bezier(0.5, 0, 0, 1);
+    transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.active {
     opacity: 1;
-    transform: translateY(0);
 }
 
 /* Loading Screen */

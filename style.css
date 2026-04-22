@@ -696,6 +696,7 @@ footer p { margin-bottom: 0.5rem; }
     border: 1px solid rgba(197, 160, 89, 0.4); 
     will-change: transform;
     transform: translateZ(0); /* Ensure smooth modal scrolling */
+    overflow-y: auto; /* Allow scrolling if content is long */
 }
 
 /* Individual padding for form steps so they don't look cramped */

@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Mosca Laroke";
+    src: url("https://db.onlinewebfonts.com/t/6c28f7503b3ab616bcdb92e842b8cee9.woff2") format("woff2"),
+         url("https://db.onlinewebfonts.com/t/6c28f7503b3ab616bcdb92e842b8cee9.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
     --bg-white: #FDFBF7;  /* Soft, premium cream matching the reference */
     --text-primary: #4A4036; /* Warmer, softer dark text */
@@ -196,13 +204,13 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .guest-subtitle {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.5em; /* Extreme luxury tracking */
+    font-family: 'Mosca Laroke', serif;
+    font-size: 1rem; /* Slightly larger for this specific font's readability */
+    letter-spacing: 0.1em; /* This font is already very stylistic, reduced tracking */
     color: #1a1a1a;
     text-transform: uppercase;
     margin-bottom: 0.8rem;
-    font-weight: 700;
+    font-weight: normal;
     opacity: 0; /* Handled by animation */
     animation: trackingInReveal 1.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
     animation-delay: 0.4s; /* Brief pause after parent container fades in */
@@ -1383,6 +1391,7 @@ footer p { margin-bottom: 0.5rem; }
     background: #557A54;
     color: white;
 }
+
 
 /* Integrated Success Action Buttons - Flow layout */
 .success-actions-overlay {

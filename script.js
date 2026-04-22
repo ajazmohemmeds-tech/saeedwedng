@@ -21,39 +21,46 @@ const urlParams = new URLSearchParams(window.location.search);
 const guestId = urlParams.get('guest');
 let currentGuestData = null;
 
-if (guestId) {
-    document.addEventListener("DOMContentLoaded", async () => {
-        try {
-            const guestRef = doc(db, "guests", guestId);
-            const guestSnap = await getDoc(guestRef);
-            
-            if (guestSnap.exists()) {
-                currentGuestData = guestSnap.data();
-                
-                // Inject personalized greeting into the UI
-                const greetingContainer = document.getElementById('personalized-greeting');
-                if (greetingContainer) {
-                    greetingContainer.innerHTML = `
-                        <p class="guest-subtitle">EXCLUSIVE INVITATION FOR</p>
-                        <h2 class="guest-name">${currentGuestData.name.toUpperCase()}</h2>
-                    `;
-                    // Brief delay to trigger entry animation after loader starts fading
-                    setTimeout(() => {
-                        greetingContainer.classList.remove('hidden');
-                        greetingContainer.classList.add('visible');
-                    }, 4000);
-                }
-
-                // Pre-fill name in RSVP modal
-                const nameInput = document.getElementById('guest-name-input');
-                if (nameInput) nameInput.value = currentGuestData.name;
-            } else {
-                console.warn("Guest ID invalid or not found.");
-            }
-        } catch(e) {
-            console.error("Error fetching guest data:", e);
+// Start fetching guest data immediately (parallel to HTML parsing)
+const guestDataPromise = (async () => {
+    if (!guestId) return null;
+    try {
+        const guestRef = doc(db, "guests", guestId);
+        const guestSnap = await getDoc(guestRef);
+        if (guestSnap.exists()) {
+            currentGuestData = guestSnap.data();
+            return currentGuestData;
         }
-    });
+    } catch (e) {
+        console.error("Error fetching guest data:", e);
+    }
+    return null;
+})();
+
+async function injectGuestName() {
+    const data = await guestDataPromise;
+    if (data) {
+        const greetingContainer = document.getElementById('personalized-greeting');
+        if (greetingContainer) {
+            greetingContainer.innerHTML = `
+                <p class="guest-subtitle">EXCLUSIVE INVITATION FOR</p>
+                <h2 class="guest-name">${data.name.toUpperCase()}</h2>
+            `;
+        }
+        const nameInput = document.getElementById('guest-name-input');
+        if (nameInput) nameInput.value = data.name;
+    }
+}
+
+// Ensure UI is ready but don't block the fetch
+document.addEventListener("DOMContentLoaded", injectGuestName);
+
+function showPersonalizedGreeting() {
+    const greetingContainer = document.getElementById('personalized-greeting');
+    if (greetingContainer && currentGuestData) {
+        greetingContainer.classList.remove('hidden');
+        greetingContainer.classList.add('visible');
+    }
 }
 
 // 1. Loading Screen Handler
@@ -65,6 +72,10 @@ if (loader) {
         loader.style.transition = 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s';
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
+        
+        // Show personalized greeting as soon as loader starts to fade
+        showPersonalizedGreeting();
+        
         lenis.start(); // Unlock scroll as soon as loader starts fading
         document.body.classList.remove('is-loading'); // Fully enable native scrolling
         

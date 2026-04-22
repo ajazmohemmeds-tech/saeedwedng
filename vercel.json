@@ -34,7 +34,7 @@
       ]
     },
     {
-      "source": "/:path*(.jpg|.jpeg|.png|.gif|.webp|.ico|.svg|.mp4|.mp3|.woff|.woff2|.ttf|.otf)",
+      "source": "/(.*)\\.(jpg|jpeg|png|gif|webp|ico|svg|mp4|mp3|woff|woff2|ttf|otf)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "source": "/:path*(.css|.js)",
+      "source": "/(.*)\\.(css|js)",
       "headers": [
         {
           "key": "Cache-Control",

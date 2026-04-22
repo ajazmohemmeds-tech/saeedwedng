@@ -1,6 +1,53 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
+// ─── Security Utilities ──────────────────────────────────────────────────────
+
+/**
+ * Sanitize a string: strips all HTML tags and trims whitespace.
+ * Prevents XSS payloads from reaching Firebase or the DOM.
+ */
+function sanitize(str) {
+    if (typeof str !== 'string') return '';
+    // Remove HTML/script tags entirely
+    return str.replace(/<[^>]*>/g, '').replace(/[<>"'`]/g, '').trim();
+}
+
+/**
+ * Validate that a name is non-empty, below max length, and only safe characters.
+ * Returns { valid: boolean, reason: string }
+ */
+function validateName(name) {
+    const s = sanitize(name);
+    if (!s) return { valid: false, reason: 'Name is required.' };
+    if (s.length > 80) return { valid: false, reason: 'Name is too long.' };
+    // Allow letters, spaces, hyphens, apostrophes, ampersands — typical name chars
+    if (!/^[\p{L}\s\-'&.,]+$/u.test(s)) return { valid: false, reason: 'Name contains invalid characters.' };
+    return { valid: true, reason: '' };
+}
+
+/** 
+ * Rate limiter: allows at most `maxCalls` calls within `windowMs` milliseconds.
+ * Uses sessionStorage so it resets when the tab is closed.
+ */
+function createRateLimiter(key, maxCalls, windowMs) {
+    return function() {
+        const now = Date.now();
+        const raw = sessionStorage.getItem(key);
+        let log = raw ? JSON.parse(raw) : [];
+        // Prune old entries outside the window
+        log = log.filter(ts => now - ts < windowMs);
+        if (log.length >= maxCalls) return false; // Rate limit exceeded
+        log.push(now);
+        sessionStorage.setItem(key, JSON.stringify(log));
+        return true;
+    };
+}
+
+// Allow max 3 RSVP submissions per 10 minutes
+const rsvpRateOk = createRateLimiter('rsvp_rate', 3, 10 * 60 * 1000);
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDABXfuMeGsTO1rxGihBTDGauIJcZ1fJGU",
@@ -42,13 +89,20 @@ async function injectGuestName() {
     if (data) {
         const greetingContainer = document.getElementById('personalized-greeting');
         if (greetingContainer) {
-            greetingContainer.innerHTML = `
-                <p class="guest-subtitle">EXCLUSIVE INVITATION FOR</p>
-                <h2 class="guest-name">${data.name.toUpperCase()}</h2>
-            `;
+            // Sanitize name before injecting into DOM to prevent stored XSS
+            const safeName = sanitize(data.name);
+            const subtitle = document.createElement('p');
+            subtitle.className = 'guest-subtitle';
+            subtitle.textContent = 'EXCLUSIVE INVITATION FOR';
+            const heading = document.createElement('h2');
+            heading.className = 'guest-name';
+            heading.textContent = safeName.toUpperCase();
+            greetingContainer.innerHTML = '';
+            greetingContainer.appendChild(subtitle);
+            greetingContainer.appendChild(heading);
         }
         const nameInput = document.getElementById('guest-name-input');
-        if (nameInput) nameInput.value = data.name;
+        if (nameInput) nameInput.value = sanitize(data.name);
     }
 }
 
@@ -277,10 +331,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         btnNo.addEventListener('click', async () => {
-            lenis.stop(); // Stop background smooth scroll
+            lenis.stop();
             document.body.classList.add('no-scroll');
-            // Database integration: Push Decline to Firebase
-            if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
+            // Rate limit check for decline
+            if (!rsvpRateOk()) {
+                console.warn('Rate limit: too many RSVP attempts.');
+                // Continue to show the decline screen — just don't write
+            } else if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
                 try {
                     const guestRef = doc(db, "guests", guestId);
                     await updateDoc(guestRef, {
@@ -289,7 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         timestamp: new Date().toISOString()
                     });
                 } catch(e) {
-                    console.error("Failed to save Decline to database:", e);
+                    // Generic error — do not expose internal details
+                    console.warn('Could not save response.');
                 }
             }
 
@@ -356,16 +414,37 @@ document.addEventListener('DOMContentLoaded', () => {
         submitRsvpFinal.addEventListener('click', async () => {
             const nameInput = document.getElementById('guest-name-input');
             const nameError = document.getElementById('name-error');
-            const guestName = nameInput ? nameInput.value.trim() : "";
+            const rawName = nameInput ? nameInput.value : "";
+            const guestName = sanitize(rawName);
 
-            // Validation check: Name is mandatory
-            if (!guestName) {
+            // ── Honeypot anti-bot check (hidden field must be empty) ──
+            const honeypot = document.getElementById('_rsvp_trap');
+            if (honeypot && honeypot.value) {
+                // Bot filled the invisible field — silently reject
+                return;
+            }
+
+            // ── Rate limiting ──
+            if (!rsvpRateOk()) {
+                if (nameError) {
+                    nameError.textContent = 'Too many submissions. Please wait a few minutes.';
+                    nameError.classList.remove('hidden');
+                }
+                return;
+            }
+
+            // ── Input validation ──
+            const nameCheck = validateName(guestName);
+            if (!nameCheck.valid) {
                 if (nameInput) {
                     nameInput.classList.add('invalid');
                     nameInput.focus();
                 }
-                if (nameError) nameError.classList.remove('hidden');
-                return; // Block submission
+                if (nameError) {
+                    nameError.textContent = nameCheck.reason;
+                    nameError.classList.remove('hidden');
+                }
+                return;
             } else {
                 if (nameInput) nameInput.classList.remove('invalid');
                 if (nameError) nameError.classList.add('hidden');
@@ -382,27 +461,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const guestRef = doc(db, "guests", guestId);
                         await updateDoc(guestRef, {
-                            name: guestName,
+                            name: guestName, // Already sanitized above
                             status: "Attending",
-                            partyCount: familyCount,
+                            partyCount: Math.min(Math.max(parseInt(familyCount) || 1, 1), 20), // Clamp 1–20
                             timestamp: new Date().toISOString()
                         });
                     } catch(e) {
-                        console.error("Failed to save RSVP to database:", e);
+                        // Generic error — no internal details exposed
+                        console.warn('Could not save response.');
                     }
                 } else {
                     try {
-                        const generalId = "walk-in-" + guestName.toLowerCase().replace(/\s+/g, '-') + "-" + Date.now().toString().slice(-4);
+                        // Build safe document ID — no user input in key path
+                        const generalId = "walk-in-" + Date.now().toString();
                         const guestRef = doc(db, "guests", generalId);
                         await setDoc(guestRef, {
                             name: guestName,
                             status: "Attending",
-                            partyCount: familyCount,
+                            partyCount: Math.min(Math.max(parseInt(familyCount) || 1, 1), 20),
                             timestamp: new Date().toISOString(),
                             isGeneral: true
                         });
                     } catch(e) {
-                        console.error("Failed to save general guest RSVP:", e);
+                        console.warn('Could not save response.');
                     }
                 }
             };

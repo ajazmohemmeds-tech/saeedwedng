@@ -14,6 +14,31 @@ const firebaseConfig = {
 
 const ADMIN_CODE = "9566";
 
+// ─── Admin Security Utilities ─────────────────────────────────────────────────
+/** Strip all HTML/script tags and dangerous characters from a string */
+function adminSanitize(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/<[^>]*>/g, '').replace(/[<>"'`]/g, '').trim();
+}
+
+/** Validate a guest name: non-empty, max 80 chars, safe chars only */
+function validateGuestName(name) {
+    const s = adminSanitize(name);
+    if (!s) return { valid: false, reason: 'Name is required.' };
+    if (s.length > 80) return { valid: false, reason: 'Name must be under 80 characters.' };
+    return { valid: true, value: s };
+}
+
+/** Validate a slug: lowercase alphanumeric and hyphens only, max 60 chars */
+function validateSlug(slug) {
+    const s = slug.toLowerCase().replace(/[^a-z0-9-]/g, '').trim();
+    if (!s) return { valid: false, reason: 'Slug is required.' };
+    if (s.length > 60) return { valid: false, reason: 'Slug must be under 60 characters.' };
+    if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(s) && s.length > 1) return { valid: false, reason: 'Invalid slug format.' };
+    return { valid: true, value: s };
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Initialize Firebase
 let app, db;
 try {
@@ -146,13 +171,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save Guest
     if (btnSave) {
         btnSave.addEventListener('click', async () => {
-            const name = nameInput.value.trim();
-            const id = idInput.value.trim();
+            const rawName = nameInput.value.trim();
+            const rawId = idInput.value.trim();
 
-            if (!name || !id) {
-                alert('Please enter both name and ID.');
+            const nameResult = validateGuestName(rawName);
+            const slugResult = validateSlug(rawId);
+
+            if (!nameResult.valid) {
+                alert(nameResult.reason);
+                nameInput.focus();
                 return;
             }
+            if (!slugResult.valid) {
+                alert(slugResult.reason);
+                idInput.focus();
+                return;
+            }
+
+            const name = nameResult.value;
+            const id = slugResult.value;
 
             try {
                 log("Saving guest: " + id, "info");
@@ -183,17 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 loadGuests(); // Refresh list
             } catch (e) {
-                console.error("Error saving guest:", e);
+                // Generic error — never expose Firebase internals to the UI
+                console.warn('Admin save failed.');
                 btnSave.innerText = 'GENERATE & SAVE LINK';
                 btnSave.disabled = false;
-
-                if (e.message === "DATABASE_TIMEOUT") {
-                    alert("⚠️ CONNECTION TIMEOUT: Firebase is not responding. Please check if you have created the 'Firestore Database' in your console and set Rules to 'Test Mode'.");
-                } else if (e.code === 'permission-denied') {
-                    alert("⚠️ PERMISSION DENIED: Your Firebase rules are blocking the save. Please set your Firestore rules to 'Test Mode'.");
-                } else {
-                    alert("⚠️ ERROR: " + e.message);
-                }
+                alert('⚠️ Could not save guest. Please check your connection and try again.');
             }
         });
     }

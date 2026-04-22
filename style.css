@@ -1485,11 +1485,12 @@ footer p { margin-bottom: 0.5rem; }
     .success-actions-overlay {
         flex-direction: row;
         justify-content: center;
-        gap: 1.5rem;
+        gap: 1rem;
+        flex-wrap: nowrap;
     }
 
     .btn-card-action {
-        font-size: 0.65rem;
+        font-size: 0.55rem;
     }
 }
 

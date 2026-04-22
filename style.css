@@ -1483,14 +1483,14 @@ footer p { margin-bottom: 0.5rem; }
     }
 
     .success-actions-overlay {
-        flex-direction: row;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: nowrap;
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        flex-wrap: nowrap !important;
     }
 
     .btn-card-action {
-        font-size: 0.55rem;
+        font-size: 0.5rem !important;
     }
 }
 

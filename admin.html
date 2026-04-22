@@ -33,7 +33,20 @@
     <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 </head>
 <body class="admin-body">
-    <div class="admin-container">
+    <!-- Admin Login Overlay -->
+    <div id="admin-login-overlay" class="login-overlay">
+        <div class="login-card">
+            <h1 class="login-title">Admin Access</h1>
+            <p class="login-subtitle">ENTER 4-DIGIT CODE</p>
+            <div class="login-input-wrapper">
+                <input type="password" id="admin-passcode" maxlength="4" placeholder="••••" inputmode="numeric">
+            </div>
+            <button id="btn-login" class="btn-login-action">UNLOCK</button>
+            <p id="login-error" class="login-error-msg hidden">Incorrect passcode. Please try again.</p>
+        </div>
+    </div>
+
+    <div id="main-admin-content" class="admin-container hidden">
         <header class="admin-header">
             <h1 class="admin-title">Guest Management</h1>
             <p class="admin-subtitle">GENERATE PERSONALIZED LINKS</p>

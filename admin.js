@@ -12,6 +12,8 @@ const firebaseConfig = {
   measurementId: "G-RFQDD5Q52V"
 };
 
+const ADMIN_CODE = "9566";
+
 // Initialize Firebase
 let app, db;
 try {
@@ -21,7 +23,50 @@ try {
     console.error("Firebase init error:", e);
 }
 
+const initializeAdmin = () => {
+    const overlay = document.getElementById('admin-login-overlay');
+    const content = document.getElementById('main-admin-content');
+    if (overlay) overlay.classList.add('hidden');
+    if (content) content.classList.remove('hidden');
+    
+    // Trigger the main logic once authorized
+    console.log("Admin authorized. Initializing dashboard...");
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('admin-login-overlay');
+    const passcodeBtn = document.getElementById('btn-login');
+    const passcodeInput = document.getElementById('admin-passcode');
+    const errorMsg = document.getElementById('login-error');
+
+    // Check existing session
+    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        initializeAdmin();
+    }
+
+    const handleLogin = () => {
+        if (passcodeInput.value === ADMIN_CODE) {
+            sessionStorage.setItem('admin_authenticated', 'true');
+            initializeAdmin();
+            // Start loading guests only after login
+            loadGuests();
+        } else {
+            if (errorMsg) errorMsg.classList.remove('hidden');
+            passcodeInput.value = '';
+            passcodeInput.focus();
+        }
+    };
+
+    if (passcodeBtn) {
+        passcodeBtn.addEventListener('click', handleLogin);
+    }
+
+    if (passcodeInput) {
+        passcodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    }
+
     // Initialize Lenis Smooth Scroll
     try {
         const lenis = new Lenis({
@@ -269,5 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    loadGuests();
+    // Only load if already authenticated, otherwise handleLogin will trigger it
+    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        loadGuests();
+    }
 });

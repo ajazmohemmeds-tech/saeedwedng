@@ -196,12 +196,31 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .guest-subtitle {
-    font-size: 0.8rem;
-    letter-spacing: 0.3em;
-    color: #000;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.5em; /* Extreme luxury tracking */
+    color: #1a1a1a;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    opacity: 0; /* Handled by animation */
+    animation: trackingInReveal 1.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+    animation-delay: 0.4s; /* Brief pause after parent container fades in */
+}
+
+@keyframes trackingInReveal {
+    0% {
+        letter-spacing: -0.2em;
+        opacity: 0;
+        filter: blur(4px);
+        transform: translateY(10px);
+    }
+    100% {
+        letter-spacing: 0.5em;
+        opacity: 0.85;
+        filter: blur(0);
+        transform: translateY(0);
+    }
 }
 
 .bismillah-text-arabic {

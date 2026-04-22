@@ -1482,15 +1482,23 @@ footer p { margin-bottom: 0.5rem; }
         font-size: 1rem;
     }
 
-    .success-actions-overlay {
+    /* Forced side-by-side buttons for success screen on mobile */
+    .rsvp-success-graphic-container .success-actions-overlay {
+        display: flex !important;
         flex-direction: row !important;
-        justify-content: center !important;
-        gap: 0.5rem !important;
         flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 1rem !important;
+        width: 100% !important;
     }
 
-    .btn-card-action {
-        font-size: 0.5rem !important;
+    .rsvp-success-graphic-container .btn-card-action {
+        font-size: 0.6rem !important;
+        display: inline-block !important;
+        width: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 }
 

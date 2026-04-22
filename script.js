@@ -247,7 +247,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const step3 = document.getElementById('rsvp-step-3');
             if(step3) step3.classList.add('hidden');
             
-            modalBackBtn.style.display = 'block';
+            // Hide back button for all modal screens as requested
+            if (modalBackBtn) modalBackBtn.style.display = 'none';
             if (musicToggle) musicToggle.classList.remove('hidden');
             
             // Fix: Ensure canvas is ready for mobile celebration
@@ -284,7 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const step3 = document.getElementById('rsvp-step-3');
             if(step3) step3.classList.remove('hidden');
             
-            modalBackBtn.style.display = 'block';
+            // Hide back button for all modal screens as requested
+            if (modalBackBtn) modalBackBtn.style.display = 'none';
+
+            // Start modal-specific smooth scroll to fix the "stuck" card on mobile
+            modalLenis.start();
+            resizeCanvas();
+            
             if (musicToggle) musicToggle.classList.add('hidden');
         });
     }
@@ -325,7 +332,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             rsvpStep1.classList.remove('hidden');
             rsvpStep1.style.opacity = '1';
-            modalBackBtn.style.display = 'block';
+            // Hide back button for all modal screens as requested
+            if (modalBackBtn) modalBackBtn.style.display = 'none';
         });
     }
 

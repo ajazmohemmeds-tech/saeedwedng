@@ -347,38 +347,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (nameError) nameError.classList.add('hidden');
             }
 
-            // Database integration: Push RSVP to Firebase
-            if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
-                try {
-                    const guestRef = doc(db, "guests", guestId);
-                    await updateDoc(guestRef, {
-                        name: guestName, // Save the provided name
-                        status: "Attending",
-                        partyCount: familyCount,
-                        timestamp: new Date().toISOString()
-                    });
-                } catch(e) {
-                    console.error("Failed to save RSVP to database:", e);
-                }
-            } else {
-                // GENERAL GUEST (No exclusive link) - Also save to dashboard!
-                try {
-                    // Generate a semi-unique ID for the general guest
-                    const generalId = "walk-in-" + guestName.toLowerCase().replace(/\s+/g, '-') + "-" + Date.now().toString().slice(-4);
-                    const guestRef = doc(db, "guests", generalId);
-                    await setDoc(guestRef, {
-                        name: guestName,
-                        status: "Attending",
-                        partyCount: familyCount,
-                        timestamp: new Date().toISOString(),
-                        isGeneral: true
-                    });
-                } catch(e) {
-                    console.error("Failed to save general guest RSVP:", e);
-                }
-            }
+            // IMMEDIATELY provide visual feedback to make it feel fast
+            submitRsvpFinal.innerText = "SAVING...";
+            submitRsvpFinal.disabled = true;
+            rsvpStep1.style.opacity = '0';
 
-            // Store and calculate data locally
+            // Start Database integration (non-blocking for UI transition)
+            const saveToFirebase = async () => {
+                if (typeof guestId !== 'undefined' && guestId && currentGuestData) {
+                    try {
+                        const guestRef = doc(db, "guests", guestId);
+                        await updateDoc(guestRef, {
+                            name: guestName,
+                            status: "Attending",
+                            partyCount: familyCount,
+                            timestamp: new Date().toISOString()
+                        });
+                    } catch(e) {
+                        console.error("Failed to save RSVP to database:", e);
+                    }
+                } else {
+                    try {
+                        const generalId = "walk-in-" + guestName.toLowerCase().replace(/\s+/g, '-') + "-" + Date.now().toString().slice(-4);
+                        const guestRef = doc(db, "guests", generalId);
+                        await setDoc(guestRef, {
+                            name: guestName,
+                            status: "Attending",
+                            partyCount: familyCount,
+                            timestamp: new Date().toISOString(),
+                            isGeneral: true
+                        });
+                    } catch(e) {
+                        console.error("Failed to save general guest RSVP:", e);
+                    }
+                }
+            };
+
+            // Calculate guest count locally while saving
             if (!localStorage.getItem('rsvp_done')) {
                 totalGuestCount += familyCount;
                 localStorage.setItem('wedding_guest_count', totalGuestCount);
@@ -393,12 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('last_family_count', familyCount);
                 if(countVal) countVal.innerText = totalGuestCount;
             }
-            
-            // Go to step 2
-            submitRsvpFinal.innerText = "SAVING...";
-            submitRsvpFinal.disabled = true;
 
-            rsvpStep1.style.opacity = '0';
+            // Run save in background and transition UI simultaneously
+            saveToFirebase();
+
             setTimeout(() => {
                 rsvpStep1.classList.add('hidden');
                 rsvpStep2.classList.remove('hidden');
@@ -409,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Trigger celebratory burst from the bottom
                 resizeCanvas();
                 triggerBurst();
-            }, 500);
+            }, 400); // Slightly faster transition (0.4s)
         });
     }
 

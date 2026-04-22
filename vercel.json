@@ -29,7 +29,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://db.onlinewebfonts.com; img-src 'self' data: blob: https://saeedwedng.vercel.app; media-src 'self' blob:; connect-src 'self' https://firestore.googleapis.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://saeed-anzi-wedding.firebaseapp.com; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;"
+          "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://db.onlinewebfonts.com; img-src 'self' data: blob: https://saeedwedng.vercel.app; media-src 'self' blob:; connect-src 'self' https://firestore.googleapis.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://saeed-anzi-wedding.firebaseapp.com; frame-ancestors 'none'; upgrade-insecure-requests;"
         }
       ]
     },

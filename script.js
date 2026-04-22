@@ -73,6 +73,10 @@ if (loader) {
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
         
+        // Force hero video to play (Browser compatibility)
+        const heroVid = document.querySelector('.hero-video');
+        if (heroVid) heroVid.play().catch(e => console.warn("Video play failed:", e));
+        
         // Show personalized greeting as soon as loader starts to fade
         showPersonalizedGreeting();
         

@@ -69,17 +69,35 @@ const guestId = urlParams.get('guest');
 let currentGuestData = null;
 
 // Start fetching guest data immediately (parallel to HTML parsing)
+// Uses sessionStorage to avoid re-fetching on every reload (scales to 500+ visitors)
 const guestDataPromise = (async () => {
     if (!guestId) return null;
+
+    // 1. Try sessionStorage cache first (instant, zero Firebase reads)
+    const cacheKey = `guest_${guestId}`;
+    try {
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            currentGuestData = parsed;
+            return parsed;
+        }
+    } catch (_) { /* ignore parse errors */ }
+
+    // 2. Cache miss — fetch from Firestore
     try {
         const guestRef = doc(db, "guests", guestId);
         const guestSnap = await getDoc(guestRef);
         if (guestSnap.exists()) {
             currentGuestData = guestSnap.data();
+            // Cache for this session to prevent repeat reads
+            try {
+                sessionStorage.setItem(cacheKey, JSON.stringify(currentGuestData));
+            } catch (_) { /* storage might be full — ignore */ }
             return currentGuestData;
         }
     } catch (e) {
-        console.error("Error fetching guest data:", e);
+        console.warn("Could not load invitation data.");
     }
     return null;
 })();

@@ -63,6 +63,113 @@ document.addEventListener('DOMContentLoaded', () => {
     const passcodeBtn = document.getElementById('btn-login');
     const passcodeInput = document.getElementById('admin-passcode');
     const errorMsg = document.getElementById('login-error');
+    const attemptsHint = document.getElementById('login-attempts-hint');
+    const loginCard = document.querySelector('.login-card');
+    const terminalLockout = document.getElementById('terminal-lockout');
+    const terminalOutput = document.getElementById('terminal-output');
+    const terminalRetryBtn = document.getElementById('terminal-retry-btn');
+
+    let failedAttempts = 0;
+    const MAX_ATTEMPTS = 4;
+
+    // ── Terminal Typewriter Engine ──────────────────────────────────────────
+    const TERMINAL_LINES = [
+        '[ ACCESS DENIED ]',
+        '',
+        '> ERROR 403 : Curiosity Detected.',
+        '> Permission rejected.',
+        '',
+        '> Try Again....or Maybe don\'t.',
+        '> This isn\'t your moment.',
+        '',
+        '> _'
+    ];
+
+    function typewriterSequence(lines, outputEl, onComplete) {
+        outputEl.innerHTML = '';
+        // Cursor element
+        const cursor = document.createElement('span');
+        cursor.className = 'terminal-cursor';
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentLineEl = null;
+
+        function nextChar() {
+            if (lineIndex >= lines.length) {
+                // All lines typed — remove cursor and signal done
+                if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const line = lines[lineIndex];
+
+            // Start a new line element
+            if (charIndex === 0) {
+                currentLineEl = document.createElement('div');
+                outputEl.appendChild(currentLineEl);
+            }
+
+            if (charIndex < line.length) {
+                // Type next character
+                currentLineEl.textContent = line.slice(0, charIndex + 1);
+                currentLineEl.appendChild(cursor);
+                charIndex++;
+                const delay = line === '' ? 20 : (Math.random() * 35 + 25); // faster on empty
+                setTimeout(nextChar, delay);
+            } else {
+                // Line finished — move cursor to next line
+                currentLineEl.textContent = line; // finalize without cursor
+                lineIndex++;
+                charIndex = 0;
+                // Pause between lines
+                const pauseMs = line === '' ? 80 : 180;
+                setTimeout(nextChar, pauseMs);
+            }
+        }
+
+        // Initial cursor blink before typing starts
+        outputEl.appendChild(cursor);
+        setTimeout(nextChar, 400);
+    }
+
+    function triggerTerminalLockout() {
+        // Hide login overlay immediately
+        if (overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+        }
+        // Show terminal
+        if (terminalLockout) terminalLockout.classList.remove('hidden');
+
+        // Run typewriter
+        typewriterSequence(TERMINAL_LINES, terminalOutput, () => {
+            // Show retry button after typing finishes
+            if (terminalRetryBtn) terminalRetryBtn.classList.remove('hidden');
+        });
+    }
+    // ── End Terminal Engine ──────────────────────────────────────────────────
+
+    // Retry: reset everything and go back to login
+    if (terminalRetryBtn) {
+        terminalRetryBtn.addEventListener('click', () => {
+            failedAttempts = 0;
+            terminalLockout.classList.add('hidden');
+            terminalRetryBtn.classList.add('hidden');
+            terminalOutput.innerHTML = '';
+            if (overlay) {
+                overlay.style.opacity = '';
+                overlay.style.visibility = '';
+            }
+            if (errorMsg) errorMsg.classList.add('hidden');
+            if (attemptsHint) attemptsHint.classList.add('hidden');
+            if (passcodeInput) {
+                passcodeInput.value = '';
+                passcodeInput.focus();
+            }
+        });
+    }
 
     // Check existing session
     if (sessionStorage.getItem('admin_authenticated') === 'true') {
@@ -71,21 +178,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleLogin = () => {
         if (passcodeInput.value === ADMIN_CODE) {
+            failedAttempts = 0;
             sessionStorage.setItem('admin_authenticated', 'true');
             initializeAdmin();
-            // Start loading guests only after login
             loadGuests();
         } else {
-            if (errorMsg) errorMsg.classList.remove('hidden');
+            failedAttempts++;
             passcodeInput.value = '';
-            passcodeInput.focus();
+
+            // Shake the card
+            if (loginCard) {
+                loginCard.classList.remove('shake');
+                void loginCard.offsetWidth; // reflow to restart animation
+                loginCard.classList.add('shake');
+            }
+
+            const remaining = MAX_ATTEMPTS - failedAttempts;
+
+            if (failedAttempts >= MAX_ATTEMPTS) {
+                // Trigger the terminal lockout
+                triggerTerminalLockout();
+            } else {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+                if (attemptsHint) {
+                    attemptsHint.classList.remove('hidden');
+                    attemptsHint.textContent = remaining === 1
+                        ? '⚠ Final attempt remaining.'
+                        : `⚠ ${remaining} attempts remaining.`;
+                }
+                passcodeInput.focus();
+            }
         }
     };
 
-    if (passcodeBtn) {
-        passcodeBtn.addEventListener('click', handleLogin);
-    }
-
+    if (passcodeBtn) passcodeBtn.addEventListener('click', handleLogin);
     if (passcodeInput) {
         passcodeInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleLogin();

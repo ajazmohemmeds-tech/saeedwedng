@@ -1496,6 +1496,126 @@ footer p { margin-bottom: 0.5rem; }
     display: none;
 }
 
+/* ─── Terminal Lockout Screen ──────────────────────────────────────────────── */
+.terminal-lockout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 8vw;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.terminal-lockout.hidden {
+    display: none;
+}
+
+/* CRT scanline effect */
+.terminal-scanlines {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 255, 65, 0.03) 3px,
+        rgba(0, 255, 65, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+    animation: terminalFlicker 8s infinite;
+}
+
+@keyframes terminalFlicker {
+    0%, 100% { opacity: 1; }
+    92%       { opacity: 1; }
+    93%       { opacity: 0.6; }
+    94%       { opacity: 1; }
+    97%       { opacity: 0.8; }
+    98%       { opacity: 1; }
+}
+
+.terminal-output {
+    position: relative;
+    z-index: 2;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+    color: #00ff41;
+    text-shadow: 0 0 8px #00ff41, 0 0 20px rgba(0, 255, 65, 0.4);
+    white-space: pre-wrap;
+    line-height: 1.8;
+    max-width: 700px;
+}
+
+/* Blinking cursor appended after typed text */
+.terminal-cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.1em;
+    background: #00ff41;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    box-shadow: 0 0 8px #00ff41;
+    animation: terminalBlink 0.8s step-end infinite;
+}
+
+@keyframes terminalBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* Shake animation for wrong password */
+@keyframes loginShake {
+    0%, 100% { transform: translateX(0); }
+    15%       { transform: translateX(-8px); }
+    30%       { transform: translateX(8px); }
+    45%       { transform: translateX(-6px); }
+    60%       { transform: translateX(6px); }
+    75%       { transform: translateX(-3px); }
+    90%       { transform: translateX(3px); }
+}
+
+.login-card.shake {
+    animation: loginShake 0.5s ease;
+}
+
+/* Terminal retry button */
+.terminal-retry {
+    position: relative;
+    z-index: 2;
+    margin-top: 2.5rem;
+    background: transparent;
+    border: 1px solid #00ff41;
+    color: #00ff41;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    text-shadow: 0 0 8px #00ff41;
+    box-shadow: 0 0 12px rgba(0, 255, 65, 0.2), inset 0 0 12px rgba(0, 255, 65, 0.05);
+    transition: all 0.3s ease;
+}
+
+.terminal-retry:hover {
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.4), inset 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.terminal-retry.hidden {
+    display: none;
+}
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 /* Integrated Success Action Buttons - Flow layout */
 .success-actions-overlay {
     width: 100%;

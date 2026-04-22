@@ -43,7 +43,18 @@
             </div>
             <button id="btn-login" class="btn-login-action">UNLOCK</button>
             <p id="login-error" class="login-error-msg hidden">Incorrect passcode. Please try again.</p>
+            <p id="login-attempts-hint" class="login-error-msg hidden" style="color:#cc6600;"></p>
         </div>
+    </div>
+
+    <!-- Terminal Lockout Screen (shows after 4 failed attempts) -->
+    <div id="terminal-lockout" class="terminal-lockout hidden">
+        <!-- CRT scanline overlay -->
+        <div class="terminal-scanlines"></div>
+        <!-- Terminal output -->
+        <div class="terminal-output" id="terminal-output"></div>
+        <!-- Retry button (appears after message is fully typed) -->
+        <button id="terminal-retry-btn" class="terminal-retry hidden">[ RETRY ACCESS ]</button>
     </div>
 
     <div id="main-admin-content" class="admin-container hidden">

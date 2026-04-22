@@ -1,72 +1,52 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
+    "basePath": "/",
+    "headers": [
         {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=63072000; includeSubDomains; preload"
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Strict-Transport-Security",
+                    "value": "max-age=63072000; includeSubDomains; preload"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "Referrer-Policy",
+                    "value": "strict-origin-when-cross-origin"
+                },
+                {
+                    "key": "Permissions-Policy",
+                    "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+                },
+                {
+                    "key": "Content-Security-Policy",
+                    "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://unpkg.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://db.onlinewebfonts.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://firestore.googleapis.com https://*.googleapis.com wss://*.googleapis.com https://identitytoolkit.googleapis.com https://saeed-anzi-wedding.firebaseapp.com; frame-ancestors 'none'; upgrade-insecure-requests;"
+                }
+            ]
         },
         {
-          "key": "X-Frame-Options",
-          "value": "DENY"
+            "source": "/(.*).(jpg|jpeg|png|gif|webp|ico|svg|mp4|mp3|woff|woff2|ttf|otf)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
         },
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://db.onlinewebfonts.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://firestore.googleapis.com https://*.googleapis.com wss://*.googleapis.com https://identitytoolkit.googleapis.com https://saeed-anzi-wedding.firebaseapp.com; frame-ancestors 'none'; upgrade-insecure-requests;"
+            "source": "/(.*).(css|js)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=86400, stale-while-revalidate=604800"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "source": "/(.+)\\.(?:jpg|jpeg|png|gif|webp|ico|svg|mp4|mp3|woff|woff2|ttf|otf)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
-        }
-      ]
-    },
-    {
-      "source": "/(.+)\\.(?:css|js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
-        }
-      ]
-    },
-    {
-      "source": "/(.+)\\.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
-  ]
+    ]
 }

@@ -293,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalBackBtn.addEventListener('click', () => {
             lenis.start(); // Resume background smooth scroll
             modalLenis.stop(); // Stop modal-specific smooth scroll
+            document.body.classList.remove('no-scroll'); // Re-enable background scrolling
             modalScreen.classList.add('hidden');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles = [];

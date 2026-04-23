@@ -8,9 +8,10 @@
 
 @font-face {
     font-family: "Mutiara";
-    src: url("fonts/mutiara.ttf") format("truetype");
+    src: url("./fonts/mutiara.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 :root {
@@ -146,12 +147,15 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
 }
 
 .loading-status {
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
+    width: 150px; /* Matching the loading bar width */
+    font-size: 8px; /* Sophisticated small size */
     color: var(--text-secondary);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
     opacity: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    text-align: justify;
+    text-align-last: justify; /* Spans the full 150px width */
     animation: fadeInText 2s ease forwards 0.8s;
 }
 

@@ -140,6 +140,13 @@ lenis.stop();
 modalLenis.stop();
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Venue Image Double Click Map
+    const venueImg = document.getElementById('venue-img');
+    if (venueImg) {
+        venueImg.addEventListener('dblclick', () => {
+            window.open('https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic', '_blank');
+        });
+    }
     const targetDate = new Date('May 24, 2026 19:00:00').getTime();
     function updateCountdown() {
         const now = new Date().getTime();

@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastClick = 0;
         const openMap = () => {
             console.log("Opening Map...");
-            window.open('https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic', '_blank');
+            window.location.href = 'https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic';
         };
 
         venueImg.addEventListener('click', (e) => {

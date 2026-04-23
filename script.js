@@ -97,7 +97,7 @@ function showPersonalizedGreeting() {
 const loader = document.getElementById('loading-screen');
 if (loader) {
     setTimeout(() => {
-        loader.style.transition = 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s';
+        loader.style.transition = 'opacity 2s cubic-bezier(0.4, 0, 0.2, 1), visibility 2s';
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
         const heroVid = document.querySelector('.hero-video');

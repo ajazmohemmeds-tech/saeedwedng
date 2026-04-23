@@ -6,6 +6,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: "Mutiara";
+    src: url("fonts/mutiara.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
     --bg-white: #FDFBF7;  /* Soft, premium cream matching the reference */
     --text-primary: #4A4036; /* Warmer, softer dark text */
@@ -95,27 +102,61 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     justify-content: center;
 }
 
-.loading-logo {
-    font-family: 'Pinyon Script', cursive;
-    font-weight: 400;
-    font-size: clamp(3rem, 15vw, 5.5rem);
-    margin-bottom: 2rem;
-    color: #4A4036;
-    opacity: 0;
-    animation: fadeInLogo 3s ease forwards 0.5s;
-    
-    /* Robust fix for calligraphy clipping */
-    display: inline-block;
-    padding: clamp(1rem, 5vw, 2rem) clamp(2rem, 15vw, 6rem); 
-    line-height: normal;
-    overflow: visible !important;
-    white-space: nowrap;
-    text-align: center;
-    transform: translateZ(0);
+.loader-container {
+    padding: 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-@keyframes fadeInLogo {
-    to { opacity: 1; }
+.loading-logo {
+    font-family: 'Mutiara', cursive;
+    font-size: clamp(4rem, 20vw, 7rem);
+    color: transparent; /* Start invisible to show only the stroke */
+    -webkit-text-stroke: 0.5px #4A4036;
+    position: relative;
+    white-space: nowrap;
+    line-height: 1.2;
+    display: inline-block;
+    padding: 0 4rem; /* Extra room for calligraphy flourishes */
+    overflow: visible !important;
+    animation: skeletalBloom 5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes skeletalBloom {
+    0% {
+        opacity: 0;
+        letter-spacing: 0.3em;
+        transform: scale(0.9) translateX(-0.5cm);
+        -webkit-text-stroke-width: 0.2px;
+        filter: blur(4px);
+    }
+    20% {
+        opacity: 1;
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        letter-spacing: normal;
+        transform: scale(1) translateX(-0.5cm);
+        -webkit-text-stroke-width: 0;
+        color: #4A4036; /* Fill the text at the end */
+    }
+}
+
+.loading-status {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    font-family: 'Inter', sans-serif;
+    animation: fadeInText 2s ease forwards 0.8s;
+}
+
+@keyframes fadeInText {
+    to { opacity: 0.8; }
 }
 
 .loading-bar {
@@ -134,7 +175,7 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     width: 100%;
     height: 100%;
     background: #4A4036;
-    animation: loading 4.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    animation: loading 5.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @keyframes loading {

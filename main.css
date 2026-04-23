@@ -457,6 +457,8 @@ h1, h2, h3, .logo, .date-digit, .time, .couple-names-main {
     object-fit: cover;
     object-position: center;
     box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
 }
 
 /* Countdown */

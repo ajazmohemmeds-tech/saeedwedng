@@ -140,11 +140,23 @@ lenis.stop();
 modalLenis.stop();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Venue Image Double Click Map
+    // Venue Image Double Click / Double Tap Map
     const venueImg = document.getElementById('venue-img');
     if (venueImg) {
-        venueImg.addEventListener('dblclick', () => {
-            window.open('https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic', '_blank');
+        let lastTap = 0;
+        const openMap = () => window.open('https://maps.app.goo.gl/Yy9LWM3McGCowyZt5?g_st=ic', '_blank');
+
+        // Desktop Double Click
+        venueImg.addEventListener('dblclick', openMap);
+
+        // Mobile / Touch Double Tap
+        venueImg.addEventListener('touchstart', (e) => {
+            const now = Date.now();
+            if (now - lastTap < 300 && now - lastTap > 0) {
+                e.preventDefault();
+                openMap();
+            }
+            lastTap = now;
         });
     }
     const targetDate = new Date('May 24, 2026 19:00:00').getTime();

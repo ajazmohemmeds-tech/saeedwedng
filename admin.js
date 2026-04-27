@@ -270,79 +270,85 @@ function setupRealtimeStats() {
     fetchGuests();
     setInterval(fetchGuests, 10000);
 
-    onSnapshot(collection(db, "visits"), (snapshot) => {
-        let mobile = 0, desktop = 0, tablet = 0;
-        let totalDuration = 0, visitsWithInteraction = 0;
-        const hourlyData = {}, dailyData = {};
-        const deviceHourly = { Mobile: {}, Desktop: {}, Tablet: {} };
+    const fetchVisits = async () => {
+        try {
+            const snapshot = await getDocs(collection(db, "visits"));
+            let mobile = 0, desktop = 0, tablet = 0;
+            let totalDuration = 0, visitsWithInteraction = 0;
+            const hourlyData = {}, dailyData = {};
+            const deviceHourly = { Mobile: {}, Desktop: {}, Tablet: {} };
 
-        snapshot.forEach(docSnap => {
-            const v = docSnap.data();
-            if (v.device === 'Mobile') mobile++;
-            else if (v.device === 'Tablet') tablet++;
-            else desktop++;
+            snapshot.forEach(docSnap => {
+                const v = docSnap.data();
+                if (v.device === 'Mobile') mobile++;
+                else if (v.device === 'Tablet') tablet++;
+                else desktop++;
 
-            if (v.duration) totalDuration += v.duration;
-            if (v.interactions && v.interactions.length > 0) visitsWithInteraction++;
+                if (v.duration) totalDuration += v.duration;
+                if (v.interactions && v.interactions.length > 0) visitsWithInteraction++;
 
-            if (v.timestamp) {
-                const date = v.timestamp.toMillis();
-                const h = new Date(date).getHours();
-                const d = new Date(date).toDateString();
-                hourlyData[h] = (hourlyData[h] || 0) + 1;
-                dailyData[d] = (dailyData[d] || 0) + 1;
-                
-                const devKey = v.device === 'Mobile' ? 'Mobile' : (v.device === 'Tablet' ? 'Tablet' : 'Desktop');
-                deviceHourly[devKey][h] = (deviceHourly[devKey][h] || 0) + 1;
+                if (v.timestamp) {
+                    const date = v.timestamp.toMillis ? v.timestamp.toMillis() : new Date(v.timestamp).getTime();
+                    const h = new Date(date).getHours();
+                    const d = new Date(date).toDateString();
+                    hourlyData[h] = (hourlyData[h] || 0) + 1;
+                    dailyData[d] = (dailyData[d] || 0) + 1;
+                    
+                    const devKey = v.device === 'Mobile' ? 'Mobile' : (v.device === 'Tablet' ? 'Tablet' : 'Desktop');
+                    deviceHourly[devKey][h] = (deviceHourly[devKey][h] || 0) + 1;
+                }
+            });
+
+            if (deviceChart) {
+                deviceChart.data.datasets[0].data = [desktop, mobile, tablet];
+                deviceChart.update();
             }
-        });
 
-        if (deviceChart) {
-            deviceChart.data.datasets[0].data = [desktop, mobile, tablet];
-            deviceChart.update();
-        }
+            const trendLabels = currentRange === '24h' 
+                ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>formatHour(h))
+                : Object.keys(dailyData).reverse();
+            const trendValues = currentRange === '24h'
+                ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>hourlyData[h])
+                : Object.keys(dailyData).reverse().map(d=>dailyData[d]);
 
-        const trendLabels = currentRange === '24h' 
-            ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>formatHour(h))
-            : Object.keys(dailyData).reverse();
-        const trendValues = currentRange === '24h'
-            ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>hourlyData[h])
-            : Object.keys(dailyData).reverse().map(d=>dailyData[d]);
+            [trendChart, trendChartStats].forEach(c => {
+                if (c) {
+                    c.data.labels = trendLabels;
+                    c.data.datasets[0].data = trendValues;
+                    c.update();
+                }
+            });
 
-        [trendChart, trendChartStats].forEach(c => {
-            if (c) {
-                c.data.labels = trendLabels;
-                c.data.datasets[0].data = trendValues;
-                c.update();
+            if (deviceTrendChart) {
+                const hours = Object.keys(hourlyData).sort((a,b)=>a-b);
+                deviceTrendChart.data.labels = hours.map(h=>formatHour(h));
+                deviceTrendChart.data.datasets[0].data = hours.map(h => deviceHourly.Desktop[h] || 0);
+                deviceTrendChart.data.datasets[1].data = hours.map(h => deviceHourly.Mobile[h] || 0);
+                deviceTrendChart.data.datasets[2].data = hours.map(h => deviceHourly.Tablet[h] || 0);
+                deviceTrendChart.update();
             }
-        });
 
-        if (deviceTrendChart) {
-            const hours = Object.keys(hourlyData).sort((a,b)=>a-b);
-            deviceTrendChart.data.labels = hours.map(h=>formatHour(h));
-            deviceTrendChart.data.datasets[0].data = hours.map(h => deviceHourly.Desktop[h] || 0);
-            deviceTrendChart.data.datasets[1].data = hours.map(h => deviceHourly.Mobile[h] || 0);
-            deviceTrendChart.data.datasets[2].data = hours.map(h => deviceHourly.Tablet[h] || 0);
-            deviceTrendChart.update();
+            const totalVisits = snapshot.size;
+
+            document.getElementById('kpi-avg-time').innerText = `${totalVisits > 0 ? Math.round(totalDuration/totalVisits) : 0}s`;
+            document.getElementById('kpi-click-rate').innerText = `${totalVisits > 0 ? Math.round((visitsWithInteraction/totalVisits)*100) : 0}%`;
+            document.getElementById('kpi-bounce-rate').innerText = `${totalVisits > 0 ? Math.round(((totalVisits - visitsWithInteraction)/totalVisits)*100) : 0}%`;
+
+            const active = Math.floor(Math.random() * 3); // Presence simulation
+            document.getElementById('live-visitor-count').innerText = `${active} ACTIVE NOW`;
+            sparkData.shift();
+            sparkData.push(active);
+            if (sparkline) sparkline.update();
+
+            renderVisitorTable(snapshot);
+        } catch (error) {
+            log(`Visits fetch Error: ${error.message}`, 'error');
+            console.error("Visits fetch Error:", error);
         }
+    };
 
-        const totalVisits = snapshot.size;
-
-        document.getElementById('kpi-avg-time').innerText = `${totalVisits > 0 ? Math.round(totalDuration/totalVisits) : 0}s`;
-        document.getElementById('kpi-click-rate').innerText = `${totalVisits > 0 ? Math.round((visitsWithInteraction/totalVisits)*100) : 0}%`;
-        document.getElementById('kpi-bounce-rate').innerText = `${totalVisits > 0 ? Math.round(((totalVisits - visitsWithInteraction)/totalVisits)*100) : 0}%`;
-
-        const active = Math.floor(Math.random() * 3); // Presence simulation
-        document.getElementById('live-visitor-count').innerText = `${active} ACTIVE NOW`;
-        sparkData.shift();
-        sparkData.push(active);
-        if (sparkline) sparkline.update();
-
-        renderVisitorTable(snapshot);
-    }, (error) => {
-        log(`Visits onSnapshot Error: ${error.message}`, 'error');
-        console.error("Visits onSnapshot Error:", error);
-    });
+    fetchVisits();
+    setInterval(fetchVisits, 15000);
 }
 
 function renderVisitorTable(snapshot) {

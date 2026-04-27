@@ -163,15 +163,15 @@ function initCharts() {
             data: { 
                 labels: [], 
                 datasets: [
-                    { label: 'Desktop', data: [], borderColor: '#10b981', backgroundColor: createGradient('rgba(16, 185, 129, 0.3)'), fill: true, tension: 0.4 },
-                    { label: 'Mobile', data: [], borderColor: '#3b82f6', backgroundColor: createGradient('rgba(59, 130, 246, 0.3)'), fill: true, tension: 0.4 },
-                    { label: 'Tablet', data: [], borderColor: '#8b5cf6', backgroundColor: createGradient('rgba(139, 92, 246, 0.3)'), fill: true, tension: 0.4 }
+                    { label: 'Desktop', data: [], borderColor: '#10b981', backgroundColor: createGradient('rgba(16, 185, 129, 0.3)'), fill: true, tension: 0.4, borderDash: [] },
+                    { label: 'Mobile', data: [], borderColor: '#3b82f6', backgroundColor: createGradient('rgba(59, 130, 246, 0.3)'), fill: true, tension: 0.4, borderDash: [5, 5] },
+                    { label: 'Tablet', data: [], borderColor: '#8b5cf6', backgroundColor: createGradient('rgba(139, 92, 246, 0.3)'), fill: true, tension: 0.4, borderDash: [2, 2] }
                 ] 
             },
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
-                plugins: { legend: { display: false } }, 
+                plugins: { legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8 } } }, 
                 scales: { 
                     y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(226, 232, 240, 0.5)' } }, 
                     x: { grid: { display: false } } 

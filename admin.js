@@ -304,12 +304,23 @@ function setupRealtimeStats() {
                 deviceChart.update();
             }
 
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            const last24h = Array.from({length: 24}, (_, i) => (currentHour - 23 + i + 24) % 24);
+            const last7d = Array.from({length: 7}, (_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - 6 + i);
+                return d.toDateString();
+            });
+
             const trendLabels = currentRange === '24h' 
-                ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>formatHour(h))
-                : Object.keys(dailyData).reverse();
+                ? last24h.map(h => formatHour(h))
+                : last7d.map(d => d.substring(0, 10)); // e.g. "Mon Apr 27"
+                
             const trendValues = currentRange === '24h'
-                ? Object.keys(hourlyData).sort((a,b)=>a-b).map(h=>hourlyData[h])
-                : Object.keys(dailyData).reverse().map(d=>dailyData[d]);
+                ? last24h.map(h => hourlyData[h] || 0)
+                : last7d.map(d => dailyData[d] || 0);
 
             [trendChart, trendChartStats].forEach(c => {
                 if (c) {
@@ -320,11 +331,10 @@ function setupRealtimeStats() {
             });
 
             if (deviceTrendChart) {
-                const hours = Object.keys(hourlyData).sort((a,b)=>a-b);
-                deviceTrendChart.data.labels = hours.map(h=>formatHour(h));
-                deviceTrendChart.data.datasets[0].data = hours.map(h => deviceHourly.Desktop[h] || 0);
-                deviceTrendChart.data.datasets[1].data = hours.map(h => deviceHourly.Mobile[h] || 0);
-                deviceTrendChart.data.datasets[2].data = hours.map(h => deviceHourly.Tablet[h] || 0);
+                deviceTrendChart.data.labels = last24h.map(h => formatHour(h));
+                deviceTrendChart.data.datasets[0].data = last24h.map(h => deviceHourly.Desktop[h] || 0);
+                deviceTrendChart.data.datasets[1].data = last24h.map(h => deviceHourly.Mobile[h] || 0);
+                deviceTrendChart.data.datasets[2].data = last24h.map(h => deviceHourly.Tablet[h] || 0);
                 deviceTrendChart.update();
             }
 

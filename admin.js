@@ -163,9 +163,9 @@ function initCharts() {
             data: { 
                 labels: [], 
                 datasets: [
-                    { label: 'Desktop', data: [], borderColor: '#0f172a', backgroundColor: createGradient('rgba(15, 23, 42, 0.3)'), fill: true, tension: 0.4 },
-                    { label: 'Mobile', data: [], borderColor: '#3182ce', backgroundColor: createGradient('rgba(49, 130, 206, 0.3)'), fill: true, tension: 0.4 },
-                    { label: 'Tablet', data: [], borderColor: '#cbd5e0', backgroundColor: createGradient('rgba(203, 213, 224, 0.3)'), fill: true, tension: 0.4 }
+                    { label: 'Desktop', data: [], borderColor: '#10b981', backgroundColor: createGradient('rgba(16, 185, 129, 0.3)'), fill: true, tension: 0.4 },
+                    { label: 'Mobile', data: [], borderColor: '#3b82f6', backgroundColor: createGradient('rgba(59, 130, 246, 0.3)'), fill: true, tension: 0.4 },
+                    { label: 'Tablet', data: [], borderColor: '#8b5cf6', backgroundColor: createGradient('rgba(139, 92, 246, 0.3)'), fill: true, tension: 0.4 }
                 ] 
             },
             options: { 
@@ -277,6 +277,7 @@ function setupRealtimeStats() {
             let totalDuration = 0, visitsWithInteraction = 0;
             const hourlyData = {}, dailyData = {};
             const deviceHourly = { Mobile: {}, Desktop: {}, Tablet: {} };
+            const deviceDaily = { Mobile: {}, Desktop: {}, Tablet: {} };
 
             snapshot.forEach(docSnap => {
                 const v = docSnap.data();
@@ -296,6 +297,7 @@ function setupRealtimeStats() {
                     
                     const devKey = v.device === 'Mobile' ? 'Mobile' : (v.device === 'Tablet' ? 'Tablet' : 'Desktop');
                     deviceHourly[devKey][h] = (deviceHourly[devKey][h] || 0) + 1;
+                    deviceDaily[devKey][d] = (deviceDaily[devKey][d] || 0) + 1;
                 }
             });
 
@@ -331,10 +333,17 @@ function setupRealtimeStats() {
             });
 
             if (deviceTrendChart) {
-                deviceTrendChart.data.labels = last24h.map(h => formatHour(h));
-                deviceTrendChart.data.datasets[0].data = last24h.map(h => deviceHourly.Desktop[h] || 0);
-                deviceTrendChart.data.datasets[1].data = last24h.map(h => deviceHourly.Mobile[h] || 0);
-                deviceTrendChart.data.datasets[2].data = last24h.map(h => deviceHourly.Tablet[h] || 0);
+                if (currentRange === '24h') {
+                    deviceTrendChart.data.labels = last24h.map(h => formatHour(h));
+                    deviceTrendChart.data.datasets[0].data = last24h.map(h => deviceHourly.Desktop[h] || 0);
+                    deviceTrendChart.data.datasets[1].data = last24h.map(h => deviceHourly.Mobile[h] || 0);
+                    deviceTrendChart.data.datasets[2].data = last24h.map(h => deviceHourly.Tablet[h] || 0);
+                } else {
+                    deviceTrendChart.data.labels = last7d.map(d => d.substring(0, 10));
+                    deviceTrendChart.data.datasets[0].data = last7d.map(d => deviceDaily.Desktop[d] || 0);
+                    deviceTrendChart.data.datasets[1].data = last7d.map(d => deviceDaily.Mobile[d] || 0);
+                    deviceTrendChart.data.datasets[2].data = last7d.map(d => deviceDaily.Tablet[d] || 0);
+                }
                 deviceTrendChart.update();
             }
 

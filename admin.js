@@ -444,12 +444,6 @@ function setupNavigation() {
             currentRange = btn.dataset.range;
         });
     });
-
-    // Restore last active section from URL hash or sessionStorage
-    const hash = window.location.hash.replace('#', '');
-    const saved = sessionStorage.getItem('admin_last_view');
-    const viewToRestore = hash || saved || 'overview';
-    navigateTo(viewToRestore);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -466,9 +460,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Restore section AFTER charts are initialized
         const hash = window.location.hash.replace('#', '');
         const saved = sessionStorage.getItem('admin_last_view');
-        if (hash || saved) navigateTo(hash || saved);
+        navigateTo(hash || saved || 'overview');
     };
-    if (sessionStorage.getItem('admin_authenticated') === 'true') start();
+    // Always show pin lock on fresh page load — clear auth so overlay is always visible
+    sessionStorage.removeItem('admin_authenticated');
+    if (false) start(); // Never auto-start — always require PIN
     passcodeBtn.addEventListener('click', () => {
         if (passcodeInput.value === ADMIN_CODE) {
             sessionStorage.setItem('admin_authenticated', 'true');

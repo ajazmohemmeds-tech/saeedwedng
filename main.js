@@ -93,6 +93,69 @@ function showPersonalizedGreeting() {
     }
 }
 
+// 0. Auto-Scroll for Mobile Inactivity (Tour Mode)
+function initAutoScroll() {
+    if (window.innerWidth > 768) return; 
+
+    const sections = [
+        '#verse-card',
+        '#schedule',
+        '#venue',
+        '#countdown-section',
+        '#rsvp',
+        '.luxury-footer',
+        '#rsvp'
+    ];
+    let currentStep = 0;
+    let autoScrollTimeout;
+    let isTourActive = false;
+
+    const startTour = () => {
+        if (currentStep >= sections.length) {
+            isTourActive = false;
+            return;
+        }
+        
+        isTourActive = true;
+        lenis.scrollTo(sections[currentStep], { 
+            duration: 2.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            onComplete: () => {
+                currentStep++;
+                if (currentStep < sections.length) {
+                    // Wait 3 seconds at current section before scrolling to next
+                    autoScrollTimeout = setTimeout(startTour, 3000);
+                } else {
+                    isTourActive = false;
+                }
+            }
+        });
+    };
+
+    const cancelAutoScroll = (e) => {
+        // Clear all timeouts and stop the tour
+        clearTimeout(autoScrollTimeout);
+        isTourActive = false;
+        
+        // Remove listeners to clean up
+        window.removeEventListener('touchstart', cancelAutoScroll);
+        window.removeEventListener('wheel', cancelAutoScroll);
+        window.removeEventListener('mousedown', cancelAutoScroll);
+    };
+
+    // Initial wait: 4 seconds in the Hero section
+    autoScrollTimeout = setTimeout(() => {
+        if (window.scrollY < 50) {
+            startTour();
+        }
+    }, 4000);
+
+    // Manual interaction (touch, wheel, click) cancels the tour
+    window.addEventListener('touchstart', cancelAutoScroll, { passive: true });
+    window.addEventListener('wheel', cancelAutoScroll, { passive: true });
+    window.addEventListener('mousedown', cancelAutoScroll, { passive: true });
+}
+
 // 1. Loading Screen Handler
 const loader = document.getElementById('loading-screen');
 if (loader) {
@@ -105,6 +168,7 @@ if (loader) {
         showPersonalizedGreeting();
         lenis.start();
         document.body.classList.remove('is-loading');
+        initAutoScroll();
         setTimeout(() => {
             loader.style.display = 'none';
             const revealObserver = new IntersectionObserver((entries) => {

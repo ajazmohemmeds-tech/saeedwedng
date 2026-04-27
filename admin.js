@@ -446,15 +446,25 @@ function renderGuestTable(snapshot) {
 
             const delBtn = e.target.closest('.btn-delete');
             if (delBtn) {
+                e.preventDefault();
+                e.stopPropagation();
                 const guestId = delBtn.dataset.id;
-                if (confirm(`Are you sure you want to delete ${guestId}?`)) {
+                
+                if (delBtn.innerText === 'SURE?') {
+                    delBtn.innerText = '...';
                     try {
                         await deleteDoc(doc(db, "guests", guestId));
                         log(`Successfully deleted guest: ${guestId}`);
                     } catch (err) {
                         log(`Delete Failed: ${err.message}`, 'error');
                         alert(`Firestore Error: ${err.message}`);
+                        delBtn.innerText = 'DEL';
                     }
+                } else {
+                    delBtn.innerText = 'SURE?';
+                    setTimeout(() => {
+                        if (delBtn.innerText === 'SURE?') delBtn.innerText = 'DEL';
+                    }, 3000);
                 }
             }
         });

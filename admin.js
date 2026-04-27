@@ -258,8 +258,10 @@ function setupRealtimeStats() {
             }
         });
         
-        
         renderGuestTable(snapshot);
+    }, (error) => {
+        log(`Guests onSnapshot Error: ${error.message}`, 'error');
+        console.error("Guests onSnapshot Error:", error);
     });
 
     onSnapshot(collection(db, "visits"), (snapshot) => {
@@ -331,6 +333,9 @@ function setupRealtimeStats() {
         if (sparkline) sparkline.update();
 
         renderVisitorTable(snapshot);
+    }, (error) => {
+        log(`Visits onSnapshot Error: ${error.message}`, 'error');
+        console.error("Visits onSnapshot Error:", error);
     });
 }
 

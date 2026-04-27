@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app-check.js";
 
 // ─── Security Utilities ──────────────────────────────────────────────────────
 function sanitize(str) {
@@ -43,9 +44,91 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ─── Cache Busting System ────────────────────────────────────────────────────
+(async () => {
+    try {
+        const snap = await getDoc(doc(db, "config", "app"));
+        if (snap.exists()) {
+            const v = snap.data().version;
+            const lv = sessionStorage.getItem('data_version');
+            if (lv && parseInt(lv) < v) {
+                console.log("New version detected. Busting cache...");
+                sessionStorage.clear();
+                sessionStorage.setItem('data_version', v);
+                window.location.reload();
+            } else {
+                sessionStorage.setItem('data_version', v);
+            }
+        }
+    } catch(e) {}
+})();
+
+// ─── Firebase App Check ──────────────────────────────────────────────────────
+// NOTE: Replace 'YOUR_RECAPTCHA_SITE_KEY' with your actual site key from Google reCAPTCHA Console
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('YOUR_RECAPTCHA_SITE_KEY'),
+  isTokenAutoRefreshEnabled: true
+});
+
 const urlParams = new URLSearchParams(window.location.search);
 const guestId = urlParams.get('guest');
 let currentGuestData = null;
+
+// ─── Analytics Tracking ──────────────────────────────────────────────────────
+let sessionStartTime = Date.now();
+const trackVisit = (async () => {
+    try {
+        const ua = navigator.userAgent;
+        let device = "Desktop";
+        if (/tablet|ipad|playbook|silk/i.test(ua)) device = "Tablet";
+        else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Opera Mini/i.test(ua)) device = "Mobile";
+
+        // Track initial hit
+        const visitRef = await addDoc(collection(db, "visits"), {
+            guestId: guestId || "anonymous",
+            device: device,
+            timestamp: serverTimestamp(),
+            url: window.location.href,
+            interactions: [],
+            duration: 0
+        });
+
+        // Update presence for specific guest
+        if (guestId) {
+            await updateDoc(doc(db, "guests", guestId), {
+                lastActive: serverTimestamp()
+            });
+        }
+
+        // Track interactions
+        const logInteraction = async (type) => {
+            try {
+                await updateDoc(visitRef, {
+                    interactions: arrayUnion({ type, time: Date.now() })
+                });
+            } catch(e) {}
+        };
+
+        // Event listeners for engagement
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('button, a, .interactive-el');
+            if (target) {
+                logInteraction(target.id || target.innerText.substring(0, 20));
+            }
+        });
+
+        // Update duration periodically or on leave
+        window.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                const duration = Math.round((Date.now() - sessionStartTime) / 1000);
+                updateDoc(visitRef, { duration: duration });
+            }
+        });
+
+    } catch (e) {
+        console.warn("Analytics error:", e);
+    }
+})();
 
 const guestDataPromise = (async () => {
     if (!guestId) return null;
@@ -326,12 +409,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             submitRsvpFinal.innerText = "SAVING..."; submitRsvpFinal.disabled = true; rsvpStep1.style.opacity = '0';
+            
+            const finalPartyCount = Math.min(Math.max(parseInt(familyCount) || 1, 1), 10); // Enforce 1-10 range
+            
             const save = async () => {
-                const payload = { name: guestName, status: "Attending", partyCount: Math.min(Math.max(parseInt(familyCount) || 1, 1), 20), timestamp: new Date().toISOString() };
+                const payload = { 
+                    name: guestName, 
+                    status: "Attending", 
+                    partyCount: finalPartyCount, 
+                    timestamp: new Date().toISOString() 
+                };
                 try {
-                    if (guestId && currentGuestData) await updateDoc(doc(db, "guests", guestId), payload);
+                    if (guestId && currentGuestData) {
+                        // Double check identity: Ensure we don't overwrite if guest name changed maliciously
+                        if (currentGuestData.name === guestName || currentGuestData.isGeneral) {
+                            await updateDoc(doc(db, "guests", guestId), payload);
+                        } else {
+                            throw new Error("Identity mismatch");
+                        }
+                    }
                     else await setDoc(doc(db, "guests", "walk-in-" + Date.now()), { ...payload, isGeneral: true });
-                } catch(e) {}
+                } catch(e) {
+                    console.error("RSVP Error:", e);
+                    alert("⚠️ Submission failed. Please try again or contact the hosts.");
+                    submitRsvpFinal.innerText = "SUBMIT RSVP"; 
+                    submitRsvpFinal.disabled = false; 
+                    rsvpStep1.style.opacity = '1';
+                    return;
+                }
             };
             save();
             localStorage.setItem('last_family_count', familyCount);

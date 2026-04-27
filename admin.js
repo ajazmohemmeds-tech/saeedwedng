@@ -486,9 +486,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const saved = sessionStorage.getItem('admin_last_view');
         navigateTo(hash || saved || 'overview');
     };
-    // Always show pin lock on fresh page load — clear auth so overlay is always visible
-    sessionStorage.removeItem('admin_authenticated');
-    if (false) start(); // Never auto-start — always require PIN
+    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        start();
+    }
     passcodeBtn.addEventListener('click', () => {
         if (passcodeInput.value === ADMIN_CODE) {
             sessionStorage.setItem('admin_authenticated', 'true');

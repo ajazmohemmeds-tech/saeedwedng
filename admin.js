@@ -430,8 +430,7 @@ function renderGuestTable(snapshot) {
     });
 }
 
-// Attach event delegation for the guest list body once
-document.addEventListener('DOMContentLoaded', () => {
+// Attach event delegation for the guest list body
     const guestListBody = document.getElementById('guest-list-body');
     if (guestListBody) {
         guestListBody.addEventListener('click', async (e) => {
@@ -460,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
 
 function navigateTo(viewId) {
     const navItems = document.querySelectorAll('.nav-item');
@@ -490,7 +488,7 @@ function setupNavigation() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+
     const passcodeBtn = document.getElementById('btn-login');
     const passcodeInput = document.getElementById('admin-passcode');
     const start = () => {
@@ -548,4 +546,4 @@ document.addEventListener('DOMContentLoaded', () => {
         await setDoc(ref, { version: newV, lastUpdate: new Date().toISOString() }, { merge: true });
         alert("Success");
     });
-});
+

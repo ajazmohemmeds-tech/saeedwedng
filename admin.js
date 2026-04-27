@@ -211,58 +211,64 @@ function drawMetricProgress(canvasId, val, max, color) {
 // ─── Real-time Listeners ─────────────────────────────────────────────────────
 
 function setupRealtimeStats() {
-    onSnapshot(collection(db, "guests"), (snapshot) => {
-        let sent = 0, attending = 0, pending = 0, declined = 0, totalHeadcount = 0;
-        snapshot.forEach(docSnap => {
-            if (docSnap.id === "config") return;
-            const data = docSnap.data();
-            sent++;
-            if (data.status === 'Attending') { attending++; totalHeadcount += (parseInt(data.partyCount) || 1); }
-            else if (data.status === 'Not Attending') declined++;
-            else pending++;
-        });
+    const fetchGuests = async () => {
+        try {
+            const snapshot = await getDocs(collection(db, "guests"));
+            let sent = 0, attending = 0, pending = 0, declined = 0, totalHeadcount = 0;
+            snapshot.forEach(docSnap => {
+                if (docSnap.id === "config") return;
+                const data = docSnap.data();
+                sent++;
+                if (data.status === 'Attending') { attending++; totalHeadcount += (parseInt(data.partyCount) || 1); }
+                else if (data.status === 'Not Attending') declined++;
+                else pending++;
+            });
 
-        document.getElementById('stat-total-invites').innerText = sent;
-        document.getElementById('stat-pending').innerText = pending;
-        document.getElementById('stat-responses').innerText = attending + declined;
-        document.getElementById('stat-attending').innerText = attending;
-        document.getElementById('stat-total-headcount').innerText = totalHeadcount;
-        document.getElementById('funnel-sent').innerText = sent;
+            document.getElementById('stat-total-invites').innerText = sent;
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-responses').innerText = attending + declined;
+            document.getElementById('stat-attending').innerText = attending;
+            document.getElementById('stat-total-headcount').innerText = totalHeadcount;
+            document.getElementById('funnel-sent').innerText = sent;
 
-        const responded = attending + declined;
-        const pendingEl = document.getElementById('funnel-pending');
-        if (pendingEl) {
-            pendingEl.innerText = pending;
-            document.getElementById('funnel-pending-perc').innerText = `${sent > 0 ? Math.round((pending/sent)*100) : 0}%`;
-        }
-        const rsvpEl = document.getElementById('funnel-rsvp');
-        if (rsvpEl) {
-            rsvpEl.innerText = responded;
-            document.getElementById('funnel-rsvp-perc').innerText = `${sent > 0 ? Math.round((responded/sent)*100) : 0}%`;
-        }
-
-        document.getElementById('val-accepted').innerText = attending;
-        document.getElementById('val-pending').innerText = pending;
-        document.getElementById('val-declined').innerText = declined;
-
-        document.querySelectorAll('.val-total-invites').forEach(el => el.innerText = sent);
-
-        drawMetricProgress('progressAccepted', attending, sent, '#3182ce');
-        drawMetricProgress('progressPending', pending, sent, '#a0aec0');
-        drawMetricProgress('progressDeclined', declined, sent, '#cbd5e0');
-
-        [rsvpChart, rsvpChartStats].forEach(c => {
-            if (c) {
-                c.data.datasets[0].data = [attending, pending, declined];
-                c.update();
+            const responded = attending + declined;
+            const pendingEl = document.getElementById('funnel-pending');
+            if (pendingEl) {
+                pendingEl.innerText = pending;
+                document.getElementById('funnel-pending-perc').innerText = `${sent > 0 ? Math.round((pending/sent)*100) : 0}%`;
             }
-        });
-        
-        renderGuestTable(snapshot);
-    }, (error) => {
-        log(`Guests onSnapshot Error: ${error.message}`, 'error');
-        console.error("Guests onSnapshot Error:", error);
-    });
+            const rsvpEl = document.getElementById('funnel-rsvp');
+            if (rsvpEl) {
+                rsvpEl.innerText = responded;
+                document.getElementById('funnel-rsvp-perc').innerText = `${sent > 0 ? Math.round((responded/sent)*100) : 0}%`;
+            }
+
+            document.getElementById('val-accepted').innerText = attending;
+            document.getElementById('val-pending').innerText = pending;
+            document.getElementById('val-declined').innerText = declined;
+
+            document.querySelectorAll('.val-total-invites').forEach(el => el.innerText = sent);
+
+            drawMetricProgress('progressAccepted', attending, sent, '#3182ce');
+            drawMetricProgress('progressPending', pending, sent, '#a0aec0');
+            drawMetricProgress('progressDeclined', declined, sent, '#cbd5e0');
+
+            [rsvpChart, rsvpChartStats].forEach(c => {
+                if (c) {
+                    c.data.datasets[0].data = [attending, pending, declined];
+                    c.update();
+                }
+            });
+            
+            renderGuestTable(snapshot);
+        } catch (error) {
+            log(`Guests fetch Error: ${error.message}`, 'error');
+            console.error("Guests fetch Error:", error);
+        }
+    };
+
+    fetchGuests();
+    setInterval(fetchGuests, 10000);
 
     onSnapshot(collection(db, "visits"), (snapshot) => {
         let mobile = 0, desktop = 0, tablet = 0;

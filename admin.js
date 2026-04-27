@@ -31,12 +31,20 @@ let deviceChart = null, sparkline = null, deviceTrendChart = null;
 let currentRange = '24h';
 let sparkData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+const safeStringify = (obj) => {
+    try {
+        return typeof obj === 'object' ? JSON.stringify(obj) : String(obj);
+    } catch (e) {
+        return '[Complex Object]';
+    }
+};
+
 const log = (msg, type = "info") => {
     const debugLog = document.getElementById('debug-log');
     if (!debugLog) return;
     const p = document.createElement('p');
     p.className = `debug-msg ${type}`;
-    const content = typeof msg === 'string' ? msg : JSON.stringify(msg);
+    const content = typeof msg === 'string' ? msg : safeStringify(msg);
     p.innerText = `> [${new Date().toLocaleTimeString()}] ${content}`;
     debugLog.appendChild(p);
     debugLog.scrollTop = debugLog.scrollHeight;
@@ -49,15 +57,15 @@ const originalWarn = console.warn;
 
 console.log = (...args) => {
     originalLog(...args);
-    log(args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '), 'info');
+    log(args.map(safeStringify).join(' '), 'info');
 };
 console.error = (...args) => {
     originalError(...args);
-    log(args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '), 'error');
+    log(args.map(safeStringify).join(' '), 'error');
 };
 console.warn = (...args) => {
     originalWarn(...args);
-    log(args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '), 'warn');
+    log(args.map(safeStringify).join(' '), 'warn');
 };
 
 // ─── Chart Initializers ──────────────────────────────────────────────────────

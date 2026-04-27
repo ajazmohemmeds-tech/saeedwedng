@@ -109,15 +109,21 @@ const trackVisit = (async () => {
             const target = e.target.closest('button, a, .interactive-el');
             if (target) {
                 logInteraction(target.id || target.innerText.substring(0, 20));
+            } else {
+                logInteraction('page_click');
             }
         });
 
-        // Update duration periodically or on leave
+        // Update duration periodically and on leave
+        const syncDuration = () => {
+            const duration = Math.round((Date.now() - sessionStartTime) / 1000);
+            updateDoc(visitRef, { duration: duration }).catch(()=>{});
+        };
+        
+        setInterval(syncDuration, 5000); // Sync every 5 seconds for live stats
+        
         window.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') {
-                const duration = Math.round((Date.now() - sessionStartTime) / 1000);
-                updateDoc(visitRef, { duration: duration });
-            }
+            if (document.visibilityState === 'hidden') syncDuration();
         });
 
     } catch (e) {

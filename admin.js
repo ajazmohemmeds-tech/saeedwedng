@@ -51,9 +51,9 @@ const log = (msg, type = "info") => {
 };
 
 // Global Log Interceptor
-const originalLog = console.log;
-const originalError = console.error;
-const originalWarn = console.warn;
+const originalLog = console.log.bind(console);
+const originalError = console.error.bind(console);
+const originalWarn = console.warn.bind(console);
 
 console.log = (...args) => {
     originalLog(...args);

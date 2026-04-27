@@ -472,7 +472,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('admin-login-overlay').classList.add('hidden');
         document.getElementById('main-admin-content').classList.remove('hidden');
         setupNavigation();
-        initCharts();
+        try {
+            initCharts();
+        } catch (e) {
+            console.warn("Charts failed to initialize, continuing without them:", e);
+            log("Charts warning: " + e.message, "warn");
+        }
         setupRealtimeStats();
         log('Admin Dashboard initialized successfully', 'success');
         setInterval(() => { if(sparkline) sparkline.update(); }, 5000);

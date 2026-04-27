@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     match /visits/{visitId} {
-      allow create: if true;
+      allow create, update: if true;
       allow read: if true;
     }
 

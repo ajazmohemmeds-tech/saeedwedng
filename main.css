@@ -2313,7 +2313,7 @@ html.lenis, html.lenis body {
 }
 
 @media (max-width: 768px) {
-    .admin-sidebar { display: none; } /* On mobile, we might need a hamburger menu later */
+    /* Base mobile adjustments handled at the end of file for minimalist overrides */
 }
 
 /* --- Sidebar Navigation --- */
@@ -2741,5 +2741,148 @@ input[type="text"]:focus {
 .m-val { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
 .m-max { font-size: 0.6rem; color: #94a3b8; font-weight: 600; }
 
+/* ==========================================================================
+   MOBILE UI RESPONSIVENESS FOR ADMIN DASHBOARD
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Full height container */
+    .minimalist-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+        flex-direction: column;
+        box-shadow: none;
+    }
 
+    /* Transform Sidebar into Bottom Navigation Bar */
+    .admin-sidebar.minimalist-sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        padding: 0.5rem;
+        border-right: none;
+        border-top: 1px solid #e2e8f0;
+        flex-direction: row;
+        z-index: 999;
+        display: flex !important; /* Override previous display:none if any */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
 
+    .admin-profile, .nav-section-label {
+        display: none; /* Hide profile and headers on bottom bar */
+    }
+
+    .admin-nav {
+        flex-direction: row;
+        width: 100%;
+        margin-bottom: 0;
+        gap: 0;
+        justify-content: space-around;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        gap: 0.3rem;
+        padding: 0.5rem;
+        margin-bottom: 0;
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        background: transparent !important;
+    }
+
+    .nav-item span:not(.nav-icon) {
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+
+    .nav-item.active {
+        color: #0f172a;
+    }
+
+    .nav-item.active .nav-icon {
+        background: #f1f5f9;
+        padding: 0.3rem;
+        border-radius: 8px;
+        transform: scale(1.1);
+    }
+
+    /* Main Content Area */
+    .admin-main-content {
+        padding: 1.5rem 1rem 6rem 1rem; /* Extra padding at bottom for nav bar */
+    }
+
+    /* Grids to single column */
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+
+    /* Stat Cards wrapping */
+    .stats-grid-large, .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+
+    /* Make the highlighted "Attending" card span full width to stand out */
+    .stat-card-premium.highlight {
+        grid-column: span 2;
+        background: #0f172a;
+        color: white;
+    }
+    
+    .stat-card-premium.highlight .label {
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .stat-card-premium.highlight .value {
+        color: white;
+    }
+
+    /* Inputs and Buttons */
+    #view-dashboard > .dashboard-card > div:first-of-type {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    #view-dashboard input, #view-dashboard button {
+        width: 100%;
+        min-width: 0 !important;
+    }
+
+    /* Live Pulse Header */
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .live-pulse-container {
+        align-self: flex-start;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sparkline-wrapper {
+        width: 100px; /* smaller sparkline on mobile */
+    }
+
+    /* Ensure tables scroll horizontally instead of squishing */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+    }
+
+    .guest-table {
+        min-width: 600px;
+    }
+}

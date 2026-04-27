@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app-check.js";
+
 
 // ─── Security Utilities ──────────────────────────────────────────────────────
 function sanitize(str) {
@@ -63,12 +63,7 @@ const db = getFirestore(app);
     } catch(e) {}
 })();
 
-// ─── Firebase App Check ──────────────────────────────────────────────────────
-// NOTE: Replace 'YOUR_RECAPTCHA_SITE_KEY' with your actual site key from Google reCAPTCHA Console
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('YOUR_RECAPTCHA_SITE_KEY'),
-  isTokenAutoRefreshEnabled: true
-});
+
 
 const urlParams = new URLSearchParams(window.location.search);
 const guestId = urlParams.get('guest');

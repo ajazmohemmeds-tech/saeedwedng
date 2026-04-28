@@ -374,10 +374,7 @@ function renderVisitorTable(snapshot) {
     const body = document.getElementById('visitor-log-body');
     if (!body) return;
     
-    // Save scroll state to prevent jumping
     const tableContainer = body.closest('.table-responsive');
-    const previousScroll = tableContainer ? tableContainer.scrollTop : 0;
-    const windowScroll = window.scrollY;
 
     const fragment = document.createDocumentFragment();
     const visits = [];
@@ -405,19 +402,13 @@ function renderVisitorTable(snapshot) {
 
     body.replaceChildren(fragment);
 
-    // Restore scroll state
-    if (tableContainer && previousScroll > 0) tableContainer.scrollTop = previousScroll;
-    window.scrollTo(0, windowScroll);
 }
 
 function renderGuestTable(snapshot) {
     const body = document.getElementById('guest-list-body');
     if (!body) return;
 
-    // Save scroll state to prevent jumping
     const tableContainer = body.closest('.table-responsive');
-    const previousScroll = tableContainer ? tableContainer.scrollTop : 0;
-    const windowScroll = window.scrollY;
 
     const fragment = document.createDocumentFragment();
     const guests = [];
@@ -449,9 +440,6 @@ function renderGuestTable(snapshot) {
 
     body.replaceChildren(fragment);
 
-    // Restore scroll state
-    if (tableContainer && previousScroll > 0) tableContainer.scrollTop = previousScroll;
-    window.scrollTo(0, windowScroll);
 }
 
 // Attach event delegation for the guest list body

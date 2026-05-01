@@ -556,9 +556,40 @@ function setupNavigation() {
         const name = document.getElementById('new-guest-name').value.trim();
         const id = document.getElementById('new-guest-id').value.trim();
         if (!name || !id) return;
-        await setDoc(doc(db, "guests", id), { name, status: "Not Responded", partyCount: 0, timestamp: new Date().toISOString() });
-        document.getElementById('new-guest-name').value = '';
-        document.getElementById('new-guest-id').value = '';
+        
+        try {
+            await setDoc(doc(db, "guests", id), { name, status: "Not Responded", partyCount: 0, timestamp: new Date().toISOString() });
+            
+            const baseUrl = window.location.href.split('admin.html')[0];
+            const generatedLink = `${baseUrl}?guest=${id}`;
+            
+            const linkArea = document.getElementById('result-link-area');
+            const linkInput = document.getElementById('generated-link');
+            const guestNameEl = document.getElementById('generated-guest-name');
+            if (linkArea && linkInput) {
+                linkInput.value = generatedLink;
+                if (guestNameEl) guestNameEl.innerText = name;
+                linkArea.classList.remove('hidden');
+            }
+            
+            document.getElementById('new-guest-name').value = '';
+            document.getElementById('new-guest-id').value = '';
+        } catch (err) {
+            log(`Save Guest Error: ${err.message}`, 'error');
+            alert(`Error saving guest: ${err.message}`);
+        }
+    });
+
+    document.getElementById('btn-copy-link')?.addEventListener('click', () => {
+        const linkInput = document.getElementById('generated-link');
+        if (linkInput && linkInput.value) {
+            navigator.clipboard.writeText(linkInput.value);
+            const btn = document.getElementById('btn-copy-link');
+            btn.innerText = 'COPIED!';
+            setTimeout(() => {
+                btn.innerText = 'COPY';
+            }, 2000);
+        }
     });
 
     document.getElementById('btn-cache-bust-overview')?.addEventListener('click', async () => {

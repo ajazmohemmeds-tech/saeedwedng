@@ -2027,30 +2027,74 @@ footer p { margin-bottom: 0.5rem; }
 
 .btn-action-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.result-area {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: #f9f9f9;
-    border-radius: 6px;
-    border: 1px dashed var(--border-light);
+.copy-pill {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: 100%;
+    max-width: 450px;
+    height: 52px;
+    margin: 1rem auto 0;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    padding: 0 6px 0 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
-.result-label { font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem; }
-
-.copy-box {
-    display: flex;
-    gap: 0.5rem;
+.pill-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #4A4036;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 15px;
+    text-align: left;
+    min-width: 0;
 }
 
-.copy-box input { flex: 1; font-size: 0.8rem; }
-
-.btn-copy {
-    padding: 0 1.5rem;
-    background: var(--text-primary);
-    color: white;
+.pill-btn {
+    background: #4A4036;
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
+    height: 34px;
+    padding: 0 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.pill-btn:hover {
+    background: #3A322C;
+}
+
+@media (max-width: 768px) {
+    .copy-pill {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        height: 42px;
+        padding: 0 4px 0 12px;
+        width: 98%;
+    }
+    .pill-name {
+        font-size: 0.85rem;
+        padding-right: 8px;
+    }
+    .pill-btn {
+        height: 32px;
+        padding: 0 10px;
+        font-size: 0.6rem;
+    }
 }
 
 /* Guest Table */

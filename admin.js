@@ -548,7 +548,7 @@ function setupNavigation() {
     });
 
     document.getElementById('new-guest-name')?.addEventListener('input', (e) => {
-        const val = e.target.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-!.,';\/]/g, '');
+        const val = e.target.value.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-!]/g, '');
         document.getElementById('new-guest-id').value = val;
     });
 

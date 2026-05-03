@@ -12,7 +12,7 @@ function validateName(name) {
     const s = sanitize(name);
     if (!s) return { valid: false, reason: 'Name is required.' };
     if (s.length > 80) return { valid: false, reason: 'Name is too long.' };
-    if (!/^[\p{L}\s\-'&.,]+$/u.test(s)) return { valid: false, reason: 'Name contains invalid characters.' };
+    if (!/^[\p{L}\s\-'&.,!;:\/]+$/u.test(s)) return { valid: false, reason: 'Name contains invalid characters.' };
     return { valid: true, reason: '' };
 }
 
